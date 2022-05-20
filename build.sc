@@ -1,8 +1,7 @@
 import $file.project.scalablytyped
+import $file.project.smithyModule
 import $file.project.versions
 import $ivy.`com.lihaoyi::os-lib:0.8.0`
-
-
 
 import mill._
 import mill.define.Target
@@ -12,6 +11,7 @@ import mill.scalajslib._
 import mill.scalajslib.api._
 import mill.util.Ctx
 import coursier.maven.MavenRepository
+import smithyModule.Smithy4sModule
 
 
 // Run this to reimport the build. I need to do this fairly often when changing library versions etc
@@ -35,7 +35,7 @@ object Config {
   )
 
   def jvmDependencies = Agg(
-    
+    ivy"com.disneystreaming.smithy4s::smithy4s-core:0.13.1"
   )
 
   def jsDependencies = Agg(
@@ -66,7 +66,7 @@ trait Common extends ScalaModule {
 }
 object shared extends Common //needed for intellij
 
-object backend extends Common {
+object backend extends Common with Smithy4sModule {
   def ivyDeps = super.ivyDeps() ++ Config.jvmDependencies
 }
 
