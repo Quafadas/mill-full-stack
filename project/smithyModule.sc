@@ -22,8 +22,12 @@ trait Smithy4sModule extends ScalaModule {
       os.walk(smithy4sInputDir().path, skip = _.ext != "smithy")
     } else Seq.empty
 
-    val scalaOutput   = T.ctx().dest / "scala"
+/* 
+    val scalaOutput   = T.ctx().dest / "scala" 
     val openapiOutput = T.ctx().dest / "openapi"
+ */ 
+    def scalaOutput   = super.millSourcePath / "src" / "gen" / "scala"
+    def openapiOutput = super.millSourcePath / "src" / "gen" / "openapi"
 
     val args = CodegenArgs(
       specs         = specFiles.toList,
