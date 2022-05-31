@@ -18,9 +18,9 @@ object Main extends IOApp {
         val docHelloRoutes = docs[IO](HelloWorldService)
         val docTodoRoutes = docs[IO](TodoService)
 
-        val allRoutes = (helloRoutes <+> todoRoutes ).map(in => 
-                in <+> docHelloRoutes <+> docTodoRoutes
-            ).map(_.orNotFound)
+        val allRoutes = (todoRoutes, helloRoutes).mapN(_ <+> _).map(in => 
+                in <+> docTodoRoutes <+> docHelloRoutes
+            ).map(_.orNotFound)        
 
         val server = allRoutes.map {
             routes => 

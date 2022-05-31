@@ -14,7 +14,7 @@ object BadInput extends smithy4s.ShapeTag.Companion[BadInput] {
   )
 
   implicit val schema: smithy4s.Schema[BadInput] = struct(
-    string.optional[BadInput]("message", _.message).addHints(smithy.api.JsonName("oops")),
+    string.optional[BadInput]("message", _.message).addHints(smithy.api.JsonName("error")),
   ){
     BadInput.apply
   }.withId(id).addHints(hints)

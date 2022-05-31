@@ -92,7 +92,7 @@
             "BadInputResponseContent": {
                 "type": "object",
                 "properties": {
-                    "oops": {
+                    "error": {
                         "type": "string"
                     }
                 }

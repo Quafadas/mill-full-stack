@@ -33,13 +33,6 @@ structure GreetOutput {
   message:String
 }
 
-@error("client")
-@httpError(480)
-structure BadInput {
-  @jsonName("oops")
-  message: String
-}
-
 structure Person {
   @httpLabel
   @required
