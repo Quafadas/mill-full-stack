@@ -2,6 +2,7 @@ import $file.project.scalablytyped
 import $file.project.smithyModule
 import $file.project.versions
 import $ivy.`com.lihaoyi::os-lib:0.8.0`
+import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 
 import mill._
 import mill.define.Target
@@ -22,6 +23,7 @@ object Config {
   def scalaJSVersion = versions.scalajs
   def laminarVersion = "0.14.2"
   def circeVersion = "0.15.0-M1"
+  val smithy4sVersion = "0.13.2"
 
   def sharedDependencies = Agg(
       ivy"io.github.quafadas::dedav4s::0.8.0",
@@ -35,7 +37,10 @@ object Config {
   )
 
   def jvmDependencies = Agg(
-    ivy"com.disneystreaming.smithy4s::smithy4s-core:0.13.1"
+    ivy"com.disneystreaming.smithy4s::smithy4s-core:${smithy4sVersion}",
+    ivy"com.disneystreaming.smithy4s::smithy4s-http4s:${smithy4sVersion}",
+    ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
+    ivy"org.http4s::http4s-ember-server:0.23.2",
   )
 
   def jsDependencies = Agg(
@@ -44,8 +49,7 @@ object Config {
 
 }
 
-trait Common extends ScalaModule {
-  def scalaVersion = Config.scalaVersion
+trait Common extends ScalaModule with versions.CommonBuildSettings {  
 
   // waiting covenant release
   def repositories = super.repositories ++ Seq(
@@ -68,6 +72,8 @@ object shared extends Common //needed for intellij
 
 object backend extends Common with Smithy4sModule {
   def ivyDeps = super.ivyDeps() ++ Config.jvmDependencies
+
+  def mainClass = Some("example.Main")
 }
 
 object frontend extends ScalaJSModule with Common {

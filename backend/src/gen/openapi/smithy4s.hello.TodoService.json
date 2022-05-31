@@ -1,30 +1,20 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "HelloWorldService",
+        "title": "TodoService",
         "version": "1.0.0"
     },
     "paths": {
-        "/hello/{name}": {
+        "/todo": {
             "get": {
-                "operationId": "Greet",
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "path",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "required": true
-                    }
-                ],
+                "operationId": "GetTodos",
                 "responses": {
                     "200": {
-                        "description": "Greet 200 response",
+                        "description": "GetTodos 200 response",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/GreetResponseContent"
+                                    "$ref": "#/components/schemas/GetTodosResponseContent"
                                 }
                             }
                         }
@@ -42,33 +32,26 @@
                 }
             }
         },
-        "/{name}": {
-            "post": {
-                "operationId": "Hello",
+        "/todo/{id}": {
+            "get": {
+                "operationId": "GetTodo",
                 "parameters": [
                     {
-                        "name": "name",
+                        "name": "id",
                         "in": "path",
                         "schema": {
                             "type": "string"
                         },
                         "required": true
-                    },
-                    {
-                        "name": "town",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Hello 200 response",
+                        "description": "GetTodo 200 response",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/HelloResponseContent"
+                                    "$ref": "#/components/schemas/GetTodoResponseContent"
                                 }
                             }
                         }
@@ -97,23 +80,51 @@
                     }
                 }
             },
-            "GreetResponseContent": {
+            "GetTodoResponseContent": {
                 "type": "object",
                 "properties": {
-                    "message": {
+                    "id": {
                         "type": "string"
-                    }
-                }
-            },
-            "HelloResponseContent": {
-                "type": "object",
-                "properties": {
-                    "message": {
+                    },
+                    "description": {
                         "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
                     }
                 },
                 "required": [
-                    "message"
+                    "id"
+                ]
+            },
+            "GetTodosResponseContent": {
+                "type": "object",
+                "properties": {
+                    "todos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Todo"
+                        }
+                    }
+                }
+            },
+            "Todo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "id"
                 ]
             }
         }

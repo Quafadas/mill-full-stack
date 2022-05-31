@@ -10,10 +10,10 @@ import smithy4s.codegen.CodegenArgs
 
 import scala.util._
 
-trait Smithy4sModule extends ScalaModule {
+trait Smithy4sModule extends ScalaModule with versions.CommonBuildSettings {
 
   /** Input directory for .smithy files */
-  protected def smithy4sInputDir: T[PathRef] = T.input {
+  protected def smithy4sInputDir: T[PathRef] = T.source {
     PathRef(millSourcePath / "smithy")
   }
 
