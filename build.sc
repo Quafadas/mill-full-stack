@@ -46,7 +46,9 @@ object Config {
   )
 
   def jsDependencies = Agg(
-    ivy"com.raquo::laminar_sjs1:$laminarVersion"
+    ivy"com.raquo::laminar::$laminarVersion",
+    ivy"org.scala-js::scalajs-dom::2.1.0",
+    ivy"org.scala-js:scalajs-java-securerandom_sjs1_2.13:1.0.0",
   )
 
 }
@@ -98,12 +100,10 @@ object backend extends Common with Smithy4sModule {
 
 object frontend extends ScalaJSModule with Common {
   def scalaJSVersion = Config.scalaJSVersion
-
+  def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
 
-  def moduleDeps = super.moduleDeps ++ Seq(scalablytyped.stModule)
-
-  def scalablyTypedIgnoredLibs = Seq("std")
+  def moduleDeps = super.moduleDeps ++ Seq(scalablytyped.stModule) // this last part runs scalably typed... 
 
   def publicDev = T {
     public(fastLinkJS)()
@@ -125,5 +125,6 @@ object Alias {
 private def public(jsTask: Task[Report]): Task[Seq[Alias]] =
   T.task {
     val jsDir = jsTask().dest.path
+    println(s"jsDir: $jsDir")
     Seq(Alias("@public", jsDir))
   }

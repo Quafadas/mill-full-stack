@@ -12,6 +12,7 @@ import org.scalajs.dom
 import viz.vega.plots.BarChart
 import org.scalajs.dom.html.Div
 import java.util.UUID
+import scala.scalajs.js.annotation.JSExportTopLevel
 object Main {
 
   case class DataItem(
@@ -28,12 +29,15 @@ object Main {
   val dataSignal = dataVar.signal
   val allValues = dataSignal.map(_.map(_.amount))
 
-  def main(args: Array[String]): Unit = {
+  @JSExportTopLevel("main")
+  def main(): Unit = {
     // Laminar initialization
+    println("hi")
     renderOnDomContentLoaded(dom.document.querySelector("#app"), appElement())
   }
 
   def appElement() = {
+    println("hu")
     div(
       h1("Hello Vite!"),
       renderDataTable(),

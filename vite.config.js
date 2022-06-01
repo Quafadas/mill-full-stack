@@ -2,8 +2,8 @@ import { spawnSync } from "child_process";
 import { defineConfig } from "vite";
 
 const alias = isDev()
-  ? runMillCommand("chart.publicDev")
-  : runMillCommand("chart.publicProd");
+  ? runMillCommand("frontend.publicDev")
+  : runMillCommand("frontend.publicProd");
 
 export default defineConfig({
   resolve: {

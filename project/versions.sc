@@ -11,16 +11,10 @@ val scalajs = "1.10.0"
 
 // Allows mill to resolve the "meta-build"
 object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
-  def repositoriesTask = T.task {
-    Seq(
-        MavenRepository("https://packages.schroders.com/artifactory/maven/")
-    ) ++ super.repositories
-}
+
 }
 
 trait CommonBuildSettings extends ScalaModule with ScalaMetalsSupport {
-  //def semanticDbVersion = "4.5.0"
-  def repositoriesTask  = CustomZincWorkerModule.repositoriesTask
-  def zincWorker        = CustomZincWorkerModule
+
   def scalaVersion      = scala
 }

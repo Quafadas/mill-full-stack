@@ -19,6 +19,7 @@ val blockingPool = Executors.newFixedThreadPool(5)
 val httpClient: Client[IO] = JavaNetClientBuilder[IO].create
 val myClient = example.MyClient.helloWorldClient(httpClient)
 myClient.use(_.greet("simon")).unsafeRunSync() 
+
 */
 
 
