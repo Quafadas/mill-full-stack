@@ -13,11 +13,12 @@ import cats.effect._
 import org.http4s.ember.client._
 import org.http4s.client._
 import java.util.concurrent._
+import cats.effect.unsafe.implicits.global 
 
 val blockingPool = Executors.newFixedThreadPool(5)
 val httpClient: Client[IO] = JavaNetClientBuilder[IO].create
 val myClient = example.MyClient.helloWorldClient(httpClient)
-
+myClient.use(_.greet("simon")).unsafeRunSync() 
 */
 
 
@@ -28,6 +29,6 @@ object MyClient {
   ): Resource[IO, HelloWorldService[IO]] =
     HelloWorldService.simpleRestJson.clientResource(
       http4sClient,
-      Uri.unsafeFromString("http://localhost")
+      Uri.unsafeFromString("http://localhost:8080")
     )
 }
