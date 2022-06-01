@@ -12,12 +12,16 @@ import scala.util._
 
 trait Smithy4sModule extends ScalaModule with versions.CommonBuildSettings {
 
+  val skipScala = false
+
+  def openapiOutput = super.millSourcePath / "src" / "gen" / "openapi"
+
   /** Input directory for .smithy files */
   protected def smithy4sInputDir: T[PathRef] = T.source {
     PathRef(millSourcePath / "smithy")
   }
 
-  private def smithy4sCodegen: T[(PathRef, PathRef)] = T {
+  def smithy4sCodegen: T[(PathRef, PathRef)] = T {
     val specFiles = if (os.exists(smithy4sInputDir().path)) {
       os.walk(smithy4sInputDir().path, skip = _.ext != "smithy")
     } else Seq.empty
@@ -27,13 +31,13 @@ trait Smithy4sModule extends ScalaModule with versions.CommonBuildSettings {
     val openapiOutput = T.ctx().dest / "openapi"
  */ 
     def scalaOutput   = super.millSourcePath / "src" / "gen" / "scala"
-    def openapiOutput = super.millSourcePath / "src" / "gen" / "openapi"
+    //def openapiOutput = super.millSourcePath / "src" / "gen" / "openapi"
 
     val args = CodegenArgs(
       specs         = specFiles.toList,
       output        = scalaOutput,
       openapiOutput = openapiOutput,
-      skipScala     = false,
+      skipScala     = skipScala,
       skipOpenapi   = false,
       allowedNS     = None,
       repositories  = List.empty,

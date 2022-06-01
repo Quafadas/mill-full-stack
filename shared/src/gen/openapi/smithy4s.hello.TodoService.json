@@ -1,0 +1,318 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TodoService",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/todo": {
+            "get": {
+                "operationId": "GetTodos",
+                "responses": {
+                    "200": {
+                        "description": "GetTodos 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetTodosResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "480": {
+                        "description": "BadInput 480 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadInputResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "CreateTodo",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTodoRequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "CreateTodo 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateTodoResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "480": {
+                        "description": "BadInput 480 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadInputResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/todo/{id}": {
+            "delete": {
+                "operationId": "DeleteTodo",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DeleteTodo 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteTodoResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "480": {
+                        "description": "BadInput 480 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadInputResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "operationId": "GetTodo",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "GetTodo 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetTodoResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "480": {
+                        "description": "BadInput 480 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadInputResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "UpdateTodo",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTodoRequestContent"
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "UpdateTodo 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateTodoResponseContent"
+                                }
+                            }
+                        }
+                    },
+                    "480": {
+                        "description": "BadInput 480 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadInputResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BadInputResponseContent": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateTodoRequestContent": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                }
+            },
+            "CreateTodoResponseContent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "DeleteTodoResponseContent": {
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "type": "number",
+                        "format": "int32",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "count"
+                ]
+            },
+            "GetTodoResponseContent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "GetTodosResponseContent": {
+                "type": "object",
+                "properties": {
+                    "todos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Todo"
+                        }
+                    }
+                }
+            },
+            "Todo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            },
+            "UpdateTodoRequestContent": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                }
+            },
+            "UpdateTodoResponseContent": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "id"
+                ]
+            }
+        }
+    }
+}

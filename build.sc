@@ -16,7 +16,7 @@ import smithyModule.Smithy4sModule
 
 
 // Run this to reimport the build. I need to do this fairly often when changing library versions etc
-// ./mill --import ivy:com.lihaoyi::mill-contrib-bloop:  mill.contrib.bloop.Bloop/install
+// ./mill --import mill.contrib.bloop.Bloop/install
 
 object Config {
   def scalaVersion = versions.scala
@@ -24,9 +24,14 @@ object Config {
   def laminarVersion = "0.14.2"
   def circeVersion = "0.15.0-M1"
   val smithy4sVersion = "0.13.2"
+  val http4sVersion = "0.23.12"
 
   def sharedDependencies = Agg(
-      ivy"io.github.quafadas::dedav4s::0.8.0",
+      ivy"org.http4s::http4s-ember-client::${http4sVersion}",
+      ivy"io.github.quafadas::dedav4s::0.8.0",  
+      ivy"com.disneystreaming.smithy4s::smithy4s-core:${smithy4sVersion}",
+      ivy"com.disneystreaming.smithy4s::smithy4s-http4s:${smithy4sVersion}",
+      ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ) ++ Agg(
       "io.circe::circe-core:",
       "io.circe::circe-generic:",
@@ -37,10 +42,7 @@ object Config {
   )
 
   def jvmDependencies = Agg(
-    ivy"com.disneystreaming.smithy4s::smithy4s-core:${smithy4sVersion}",
-    ivy"com.disneystreaming.smithy4s::smithy4s-http4s:${smithy4sVersion}",
-    ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
-    ivy"org.http4s::http4s-ember-server:0.23.2",
+    ivy"org.http4s::http4s-ember-server::${http4sVersion}",
   )
 
   def jsDependencies = Agg(
@@ -68,10 +70,28 @@ trait Common extends ScalaModule with versions.CommonBuildSettings {
   }
 
 }
-object shared extends Common //needed for intellij
+object shared extends Common with Smithy4sModule {
+
+} 
 
 object backend extends Common with Smithy4sModule {
   def ivyDeps = super.ivyDeps() ++ Config.jvmDependencies
+
+  override def smithy4sInputDir: T[PathRef] = T.source {
+    PathRef(shared.millSourcePath / "smithy")
+  }
+
+  // Not 100% clear that this _should_ be necessary, but as far as I can tell.... it is! 
+  override def smithy4sCodegen = T {
+    val codegen = super.smithy4sCodegen()  
+    os.copy.over(
+      shared.openapiOutput,
+      super.openapiOutput
+    )
+    codegen 
+  }
+
+  override val skipScala = true
 
   def mainClass = Some("example.Main")
 }
