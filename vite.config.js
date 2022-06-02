@@ -6,6 +6,7 @@ const alias = isDev()
   : runMillCommand("frontend.publicProd");
 
 export default defineConfig({
+  root: "frontend/ui",
   resolve: {
     alias: alias,
   },
