@@ -7,6 +7,12 @@ const alias = isDev()
 
 export default defineConfig({
   root: "frontend/ui",
+  proxy: {
+      "/" : {
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    }
+  },
   resolve: {
     alias: alias,
   },

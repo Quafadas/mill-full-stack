@@ -4,3 +4,6 @@ node_modules
 .vscode
 out
 *.semanticdb
+/backend/resources
+.smithy.lsp.log
+/frontend/ui/dist

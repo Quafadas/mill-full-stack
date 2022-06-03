@@ -12,7 +12,7 @@ object HelloWorldImpl extends HelloWorldService[IO] {
     }
   }
 
-  def greet(name: String) = IO.pure {
+  def greet(name: String) = IO.pure {    
     GreetOutput(s"hi $name".some)
   }
 

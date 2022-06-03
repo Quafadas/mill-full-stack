@@ -20,9 +20,10 @@ import org.http4s.dom.FetchClientBuilder
 import cats.effect._
 import smithy4s.hello.HelloWorldService
 import smithy4s.hello.GreetOutput
-
+import cats.effect.unsafe.implicits.global
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object Main {
 
@@ -36,9 +37,11 @@ object Main {
     def apply(): DataItem = DataItem(scala.util.Random.nextString(5), Math.random())
   }
 
+  def io2Es[A](in : IO[A]) : EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
+
   val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
   val myClient: Resource[cats.effect.IO, HelloWorldService[cats.effect.IO]] = example.MyClient.helloWorldClient(helloClient)
-  //val something: Resource[cats.effect.IO, IO[GreetOutput]] = emberClient.map(_.greet("simon"))
+  
 
   val dataVar = Var[List[DataItem]](List(DataItem("one", 1.2)))
   val dataSignal = dataVar.signal
@@ -46,15 +49,17 @@ object Main {
 
   @JSExportTopLevel("main")
   def main(): Unit = {
-    // Laminar initialization
-    println("hi")
     renderOnDomContentLoaded(dom.document.querySelector("#app"), appElement())
   }
 
-  def appElement() = {
-    println("hu")
+  def appElement() = {    
     div(
       h1("Hello Vite!"),
+      div(
+        child.text <-- {
+            io2Es(myClient.use(_.greet("Smithy4s")).map(_.message.getOrElse("nothing ")) )
+          }                        
+      ),
       renderDataTable(),
       ul(
         li("Sum of values: ", child.text <-- allValues.map(_.sum)),

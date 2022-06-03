@@ -28,8 +28,8 @@ object Config {
 
   def sharedDependencies = Agg(      
       ivy"io.github.quafadas::dedav4s::0.8.0",  
-      ivy"com.disneystreaming.smithy4s::smithy4s-core:${smithy4sVersion}",
-      ivy"com.disneystreaming.smithy4s::smithy4s-http4s:${smithy4sVersion}",
+      ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
+      ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
       ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ) ++ Agg(
       "io.circe::circe-core:",
@@ -94,6 +94,29 @@ object backend extends Common with Smithy4sModule {
     codegen 
   }
 
+  override def assembly = T {  
+    // Run a the full frontend build
+    val resourcePath = backend.millSourcePath / "resources"
+    frontend.publicProd()
+    os.proc("npm run build")
+    // In this example, vite is configured to use frontend/ui as it's root path.
+    // we need to copy it's bundled output, into our webserver.
+    
+    os.remove.all( resourcePath )
+    os.makeDir( resourcePath )
+    os.copy(
+      frontend.millSourcePath / "ui" / "dist" / "index.html",
+      resourcePath / "index.html"
+    ) 
+    os.copy(
+      frontend.millSourcePath / "ui" / "dist" / "assets",
+      resourcePath,
+      mergeFolders = true
+    ) 
+    super.assembly()
+    
+  }
+
   override val skipScala = true
 
   def mainClass = Some("example.Main")
@@ -126,6 +149,6 @@ object Alias {
 private def public(jsTask: Task[Report]): Task[Seq[Alias]] =
   T.task {
     val jsDir = jsTask().dest.path
-    println(s"jsDir: $jsDir")
+    //println(s"jsDir: $jsDir")
     Seq(Alias("@public", jsDir))
   }
