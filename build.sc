@@ -26,8 +26,7 @@ object Config {
   val smithy4sVersion = "0.13.2"
   val http4sVersion = "0.23.12"
 
-  def sharedDependencies = Agg(
-      ivy"org.http4s::http4s-ember-client::${http4sVersion}",
+  def sharedDependencies = Agg(      
       ivy"io.github.quafadas::dedav4s::0.8.0",  
       ivy"com.disneystreaming.smithy4s::smithy4s-core:${smithy4sVersion}",
       ivy"com.disneystreaming.smithy4s::smithy4s-http4s:${smithy4sVersion}",
@@ -49,6 +48,8 @@ object Config {
     ivy"com.raquo::laminar::$laminarVersion",
     ivy"org.scala-js::scalajs-dom::2.1.0",
     ivy"org.scala-js:scalajs-java-securerandom_sjs1_2.13:1.0.0",
+    ivy"org.http4s::http4s-dom::0.2.2",
+    ivy"org.http4s::http4s-client::${http4sVersion}"
   )
 
 }

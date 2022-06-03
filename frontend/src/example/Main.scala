@@ -13,6 +13,17 @@ import viz.vega.plots.BarChart
 import org.scalajs.dom.html.Div
 import java.util.UUID
 import scala.scalajs.js.annotation.JSExportTopLevel
+
+import smithy4s.http4s._
+import org.scalajs.dom._
+import org.http4s.dom.FetchClientBuilder
+import cats.effect._
+import smithy4s.hello.HelloWorldService
+import smithy4s.hello.GreetOutput
+
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object Main {
 
   case class DataItem(
@@ -25,7 +36,11 @@ object Main {
     def apply(): DataItem = DataItem(scala.util.Random.nextString(5), Math.random())
   }
 
-  val dataVar = Var[List[DataItem]](List(DataItem("one", 1.0)))
+  val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
+  val myClient: Resource[cats.effect.IO, HelloWorldService[cats.effect.IO]] = example.MyClient.helloWorldClient(helloClient)
+  //val something: Resource[cats.effect.IO, IO[GreetOutput]] = emberClient.map(_.greet("simon"))
+
+  val dataVar = Var[List[DataItem]](List(DataItem("one", 1.2)))
   val dataSignal = dataVar.signal
   val allValues = dataSignal.map(_.map(_.amount))
 
