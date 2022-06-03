@@ -10,34 +10,34 @@ service TodoService {
 }
 
 @readonly
-@http(method: "GET", uri: "/todo")
+@http(method: "GET", uri: "/api/todo")
 operation GetTodos {   
   output: Todos,  
 }
 
 @readonly
-@http(method: "GET", uri: "/todo/{id}")
+@http(method: "GET", uri: "/api/todo/{id}")
 operation GetTodo {
   input: TodoInput,
   output: Todo,
   errors: [BadInput]
 }
 
-@http(method: "POST", uri: "/todo/{id}")
+@http(method: "POST", uri: "/api/todo/{id}")
 operation UpdateTodo {    
   input: Todo, 
   output: Todo,
   errors: [BadInput]
 }
 
-@http(method: "PUT", uri: "/todo")
+@http(method: "PUT", uri: "/api/todo")
 operation CreateTodo {    
   input: NewTodo, 
   output: Todo,
   errors: [BadInput]
 }
 
-@http(method: "DELETE", uri: "/todo/{id}")
+@http(method: "DELETE", uri: "/api/todo/{id}")
 operation DeleteTodo {    
   input: TodoInput, 
   output: TodoDeletedCount,

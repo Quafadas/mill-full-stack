@@ -1,6 +1,8 @@
 package example
 
 import cats.effect._
+import org.http4s._
+import org.http4s.dsl.io._
 import org.http4s.ember.server._
 import org.http4s.implicits._
 import com.comcast.ip4s._
@@ -12,24 +14,36 @@ import org.http4s.server.middleware._
 import org.http4s.server.staticcontent._
 import java.io.File
 import org.http4s.server.Router
+import cask.model.Status.OK
+import org.http4s.Response
+import org.http4s.Status
+import scala.io.Source
+import org.http4s.Request
+import org.http4s.HttpRoutes
 
 object Main extends IOApp {
-    
+    // todo : https://github.com/http4s/http4s/issues/2977
     def run(args: List[String]): IO[ExitCode] = 
 
-        val ui =  resourceServiceBuilder[IO]("").toRoutes
-        val ui2 = fileService[IO](FileService.Config("./assets"))
+        val ui =  resourceServiceBuilder[IO]("").toRoutes        
         
         val helloRoutes = SimpleRestJsonBuilder.routes(HelloWorldImpl).make
         val todoRoutes = SimpleRestJsonBuilder.routes(TodoImpl).make
         val docHelloRoutes = docs[IO](HelloWorldService)
         val docTodoRoutes = docs[IO](TodoService)
         
-        val uiRouter = Router("/assets" -> ui)
+        val assetRouter = Router("/assets" -> ui)        
+        val homeRoute = HttpRoutes.of[IO] {
+            case req @ GET -> Root =>
+                StaticFile.fromResource("index.html", req.some).getOrElseF(NotFound())
+            case req @ GET -> Root / "index.html" =>
+                //Ok("hi")
+                StaticFile.fromResource("index.html", req.some).getOrElseF(NotFound())
+        }
+        
+        val apiRoutes = (todoRoutes, helloRoutes).mapN(_ <+> _)
 
-        val allRoutes = (todoRoutes, helloRoutes).mapN(_ <+> _).map(in => 
-                in <+> docTodoRoutes <+> docHelloRoutes <+> uiRouter
-            ).map(_.orNotFound)        
+        val allRoutes = apiRoutes.map(api => api <+> docTodoRoutes <+> docHelloRoutes <+> assetRouter <+> homeRoute).map(_.orNotFound)        
 
         val server = allRoutes.map {
             routes => 

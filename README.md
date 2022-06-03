@@ -18,6 +18,8 @@ These three things recompile and restart the backend. Continuously recompile sca
 
 1. No authentication
 2. CORS disabled
+3. backend.assembly should generate a JAR which contains the entire application (inc. frontend)
+
 
 The first compilation will like be rather slow. Incremental change has been for me, startlingly quick when one appreciates that the entire HTTP api, is statically typed.
 

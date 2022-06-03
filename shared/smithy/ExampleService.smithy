@@ -10,14 +10,14 @@ service HelloWorldService {
 }
 
 @readonly
-@http(method: "GET", uri: "/hello/{name}")
+@http(method: "GET", uri: "/api/hello/{name}")
 operation Greet {
   input: GreetInput,
   output: GreetOutput,
   errors: [BadInput]
 }
 
-@http(method: "POST", uri: "/{name}", code: 200)
+@http(method: "POST", uri: "/api/{name}", code: 200)
 operation Hello {
   input: Person,
   output: Greeting
