@@ -7,3 +7,4 @@ out
 /backend/resources
 .smithy.lsp.log
 /frontend/ui/dist
+.DS_Store

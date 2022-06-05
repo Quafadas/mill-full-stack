@@ -20,6 +20,7 @@ import org.http4s.Status
 import scala.io.Source
 import org.http4s.Request
 import org.http4s.HttpRoutes
+import fs2.compression.ZLibParams.Header.GZIP
 
 object Main extends IOApp {
     // todo : https://github.com/http4s/http4s/issues/2977
@@ -50,7 +51,9 @@ object Main extends IOApp {
                 println(" ---->> !!!! <<----")
                 println("HEALTH RISK : This configuration bypasses CORS. You have been warned.")
                 println(" ---->> !!!! <<----")
-                val corsBypass = CORS.policy.withAllowOriginAll(routes)
+                // Probably we only really want to GZIP the bundle, rather than the API routes, but I don't really know how to do that, 
+                // so I'm just gzipping the whole thing.
+                val corsBypass = GZip(CORS.policy.withAllowOriginAll(routes))
                 EmberServerBuilder.default[IO]
                 .withPort(port"8080")
                 .withHost(host"localhost")
