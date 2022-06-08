@@ -29,3 +29,12 @@ The first compilation will like be rather slow. Incremental change has been for 
 2. laminar
 
 Those two choices basically dicatate most of the other parts of build.sc. The frontend is driven through [vite](https://vitejs.dev).
+
+# Handy references
+https://softwaremill.com/practical-guide-to-error-handling-in-scala-cats-and-cats-effect/
+
+
+
+smithy4s can load smithy models from jars, so you can share smithy files across several codebases 
+https://github.com/disneystreaming/smithy4s/tree/main/modules/protocol/resources/META-INF/smithy
+https://github.com/disneystreaming/smithy4s/blob/main/modules/codegen-plugin/src/sbt-test/codegen-plugin/dependencies-only/build.sbt#L9
