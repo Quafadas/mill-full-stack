@@ -8,3 +8,4 @@ out
 .smithy.lsp.log
 /frontend/ui/dist
 .DS_Store
+mill.bat
