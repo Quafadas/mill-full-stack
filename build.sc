@@ -3,6 +3,9 @@ import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.16.2`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import smithy4s.codegen.mill._
 
+import mill._
+import mill.scalalib._
+
 // Run this to reimport the build. I need to do this fairly often when changing library versions etc
 // ./mill --no-server mill.contrib.bloop.Bloop/install
 // ./mill --no-server mill.contrib.Bloop/install
@@ -24,7 +27,7 @@ object Config {
 
 object shared extends Smithy4sModule {
   def scalaVersion      = Config.scalaVersion
-  def scalaJSVersion = Config.scalaJSVersion
+  
   def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
 
 
