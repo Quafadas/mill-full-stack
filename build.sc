@@ -24,187 +24,25 @@ import smithy4s.codegen.mill._
 // ./mill --no-server mill.contrib.bloop.Bloop/install
 // ./mill --no-server mill.contrib.Bloop/install
 
-// Allows mill to resolve the "meta-build"
-object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
-
-}
 
 object Config {
   def scalaVersion = "3.2.0"
-  def scalaJSVersion = "1.11.0"
-  def laminarVersion = "0.14.5"
-  def circeVersion = "0.15.0-M1"  
-  val smithy4sVersion = smithy4s.codegen.BuildInfo.version
-  val http4sVersion = "0.23.16"
-  val scribeVersion = "3.10.3"
 
-  def sharedDependencies = Agg(      
-      ivy"io.github.quafadas::dedav4s::0.8.0",  
+  val smithy4sVersion = smithy4s.codegen.BuildInfo.version
+
+
+  def sharedDependencies = Agg(            
       ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
       ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
-      ivy"com.outr::scribe::$scribeVersion",
-      ivy"com.outr::scribe-cats::$scribeVersion",
-      ivy"com.lihaoyi::upickle::2.0.0"
-    ) ++ Agg(
-      "io.circe::circe-core:",
-      "io.circe::circe-generic:",
-      "io.circe::circe-parser:"
-    ).map(x => {
-      ivy"$x$circeVersion"      
-    } 
-  )
-
-  def jvmDependencies = Agg(
-    ivy"org.http4s::http4s-ember-server::${http4sVersion}",
-    ivy"org.http4s::http4s-ember-client::${http4sVersion}",
-    ivy"org.http4s::http4s-circe:${http4sVersion}",
-    ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
-    ivy"org.tpolecat::skunk-core:0.3.2",    
-    ivy"is.cir::ciris:2.4.0",
-    ivy"io.chrisdavenport::mules:0.6.0",
-    ivy"org.flywaydb:flyway-core:9.4.0",
-    ivy"org.postgresql:postgresql:42.5.0",
   )
 
 
-  def jsDependencies = Agg(
-    ivy"""com.raquo::laminar::0.14.5""",
-    ivy"""com.github.sherpal:LaminarSAPUI5Bindings:1.3.0-8f02a832""",
-    ivy"""com.raquo::waypoint::0.5.0""",
-    ivy"org.scala-js::scalajs-dom::2.3.0",
-    ivy"org.scala-js:scalajs-java-securerandom_sjs1_2.13:1.0.0",
-    ivy"org.http4s::http4s-dom::0.2.3",
-    ivy"org.http4s::http4s-client::${http4sVersion}",
-    ivy"io.laminext::core::0.14.4"
-  )
 }
 
-trait CommonBuildSettings extends ScalaModule {
-  //def semanticDbVersion = "4.5.0"
-  def repositoriesTask  = CustomZincWorkerModule.repositoriesTask
-  def zincWorker        = CustomZincWorkerModule
+object shared extends Smithy4sModule {
   def scalaVersion      = Config.scalaVersion
-}
-
-trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {  
-  //def repositories = super.repositories ++ Seq(
-    // MavenRepository("https://jitpack.io")
-  //)
-
-  def scalaVersion = Config.scalaVersion
-
-  def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
-
-  def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
-}
-
-object shared extends Common with Smithy4sModule with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
   def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
 
-  object test extends Tests with TestModule.Munit {
-    def ivyDeps = Agg(
-      ivy"org.scalameta::munit::1.0.0-M6"
-    )
-  }
 
 } 
-
-object backend extends Common with DotEnvModule { //with ScalafixModule
-  def ivyDeps = super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
-
-  def moduleDeps = Seq(shared)
-
-  def assemblyRules = {
-    // Run a the full frontend build
-    println("assuming you've already built and packaged the frontend with npm run build... ")
-    val resourcePath = backend.millSourcePath / "resources" / "assets"
-    if (os.exists(resourcePath) ) {
-      os.remove.all( resourcePath )
-    }
-    println("assuming you've already built and packaged the frontend with npm run build... ")
-    os.makeDir.all( resourcePath )
-    os.copy(
-      frontend.millSourcePath / "ui" / "dist" / "index.html",
-      resourcePath / "index.html"
-    ) 
-    os.copy(
-      frontend.millSourcePath / "ui" / "dist" / "assets",
-      resourcePath,
-      mergeFolders = true
-    ) 
-/*     os.copy(
-      backend.millSourcePath / "src" / "gen" / "openapi",
-      backend.millSourcePath / "resources",
-      mergeFolders = true
-    ) */
-
-    val assets = os.walk(backend.millSourcePath / "resources" )
-    println(assets)
-    assets.map(x => Rule.Append(x.toString))
-  }  
-
-
-  object test extends Tests with TestModule.Munit with DotEnvModule {
-    def ivyDeps = Agg(
-      ivy"org.scalameta::munit::1.0.0-M6",
-      ivy"org.typelevel::munit-cats-effect::2.0.0-M3"
-    )
-
-    override def dotenvSources = T.sources { os.pwd / ".env-test" }
-  }
-
-  def mainClass = Some("backend.Main")
-}
-
-object frontend extends Common with ScalaJSModule {
-  def scalaJSVersion = Config.scalaJSVersion
-  def moduleKind = ModuleKind.ESModule
-  def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(
-    List(
-        "frontend", 
-        "frontend.events",
-        "frontend.components",
-        "frontend.exposed"
-      )
-  )
-
-  def publicDev = T {
-    public(fastLinkJS)()
-  }
-  def publicProd = T {
-    public(fullLinkJS)()
-  }
-
-  // override def generatedSources: T[Seq[PathRef]] = T {    
-  //    val (scalaOutput, _) = shared.smithy4sCodegen()
-  //    scalaOutput +: super.generatedSources()
-  // }
-
-  // override def smithy4sInputDir: T[PathRef] = T.source {
-  //   PathRef(shared.millSourcePath / "smithy")
-  // }
-
-  // def sources = T.sources(
-  //   millSourcePath / "src",
-  //   millSourcePath / os.up / "shared" / "src"
-  // )
-
-  def moduleDeps = Seq(shared) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)
-
-  def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
-}
-
-// Needed for the frontend publicDev / publicProd tasks... 
-case class Alias(find: String, replacement: os.Path)
-object Alias {
-  import upickle.default._
-  implicit val rw: ReadWriter[Alias] = macroRW
-}
-
-
-private def public(jsTask: Task[Report]): Task[Seq[Alias]] = T.task {
-    val jsDir = jsTask().dest.path
-    //println(s"jsDir: $jsDir")
-    Seq(Alias("@public", jsDir))
-}
