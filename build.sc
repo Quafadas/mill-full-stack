@@ -26,14 +26,7 @@ import smithy4s.codegen.mill._
 
 // Allows mill to resolve the "meta-build"
 object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
-  def repositoriesTask = T.task {
-    Seq(
-        MavenRepository("https://packages.schroders.com/artifactory/maven/"), 
-        MavenRepository("https://packages.schroders.com/artifactory/sbt-snapshot-local/"),
-        MavenRepository("https://packages.schroders.com/artifactory/maven-jitpack-remote/"), 
-        coursier.LocalRepositories.ivy2Local               
-    )
-  }
+
 }
 
 object Config {
