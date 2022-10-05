@@ -105,7 +105,7 @@ trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
   def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 }
 
-object shared extends Common with ScalaJSModule {
+object shared extends Common with Smithy4sModule with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
   def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
 
