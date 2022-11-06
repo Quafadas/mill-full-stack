@@ -1,4 +1,4 @@
-package example
+package backend
 
 import cats.effect._
 import org.http4s._

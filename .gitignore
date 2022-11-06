@@ -9,3 +9,6 @@ out
 /frontend/ui/dist
 .DS_Store
 mill.bat
+.ammonite
+.bsp
+.env

@@ -6,8 +6,4 @@ class HelloSuite extends munit.FunSuite {
     val expected = 43
     assertEquals(obtained, expected)
   }
-
-  test("hello") {
-    assertEquals(Hello.greeting, "hello")
-  }
 }

@@ -1,4 +1,4 @@
-package example
+package backend
 
 import smithy4s.hello._
 import cats.effect.IO

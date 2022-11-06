@@ -1,8 +1,6 @@
 # mill-full-stack
 
-An experiment in full stack with mill, smithy, scalably typed... 
-
-Basically, "all the things" :-)!
+An experiment in full stack with mill, smithy, scala js and laminar... 
 
 # Development
 
@@ -38,3 +36,14 @@ https://softwaremill.com/practical-guide-to-error-handling-in-scala-cats-and-cat
 smithy4s can load smithy models from jars, so you can share smithy files across several codebases 
 https://github.com/disneystreaming/smithy4s/tree/main/modules/protocol/resources/META-INF/smithy
 https://github.com/disneystreaming/smithy4s/blob/main/modules/codegen-plugin/src/sbt-test/codegen-plugin/dependencies-only/build.sbt#L9
+
+# Getting started. 
+You'll need to find your predefScript.sc file in $HOME/.mill/ammonite and add
+
+```
+interp.repositories() ++= Seq(
+    coursierapi.MavenRepository.of("https://jitpack.io")
+)
+```
+
+In order to resolve mill-dotenv which is hosted on jitpack
