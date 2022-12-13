@@ -1,6 +1,6 @@
-package example
+package hello
 
-import smithy4s.hello._
+import hello._
 import cats.effect.IO
 import cats.syntax.all._
 
