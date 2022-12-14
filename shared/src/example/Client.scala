@@ -7,14 +7,29 @@ import cats.effect.IO
 import cats.effect.Resource
 
 import hello.HelloWorldService
+import hello.TodoService
 
-object MyClient {    
+object Clients {    
   def helloWorldClient(
       http4sClient: Client[IO]
   ): Resource[IO, HelloWorldService[IO]] =
     SimpleRestJsonBuilder
         .apply(HelloWorldService)        
         .client(http4sClient)
-        .uri(Uri.unsafeFromString("http://localhost:8080"))
+        .uri(Uri.unsafeFromString("/"))
+        .resource
+
+  def todoClient(
+      http4sClient: Client[IO]
+  ): Resource[IO, TodoService[IO]] =
+    SimpleRestJsonBuilder
+        .apply(TodoService)
+        .client(http4sClient)
+        .uri(Uri.unsafeFromString("/"))
         .resource
 }
+
+object TodoClient {    
+
+}
+

@@ -1,7 +1,9 @@
 {
     "dependencies": {
-        "@types/leaflet": "^1.7.10",
-        "vega-embed": "^6.20.8"
+        "vega-embed": "^6.20.8",
+        "@ui5/webcomponents": "1.8.0",
+        "@ui5/webcomponents-fiori": "1.8.0",
+        "@ui5/webcomponents-icons": "1.8.0"
     },
     "devDependencies": {
         "@rollup/plugin-alias": "^3.1.9",        

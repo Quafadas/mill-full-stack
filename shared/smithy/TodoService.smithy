@@ -30,6 +30,7 @@ operation UpdateTodo {
   errors: [BadInput]
 }
 
+@idempotent
 @http(method: "PUT", uri: "/api/todo")
 operation CreateTodo {    
   input: NewTodo, 
@@ -37,6 +38,7 @@ operation CreateTodo {
   errors: [BadInput]
 }
 
+@idempotent
 @http(method: "DELETE", uri: "/api/todo/{id}")
 operation DeleteTodo {    
   input: TodoInput, 
