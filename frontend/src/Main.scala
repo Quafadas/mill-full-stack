@@ -18,9 +18,10 @@ import smithy4s.http4s._
 import org.scalajs.dom._
 import org.http4s.dom.FetchClientBuilder
 import cats.effect._
-import smithy4s.hello.HelloWorldService
-import smithy4s.hello.GreetOutput
+import hello.HelloWorldService
+import hello.GreetOutput
 import cats.effect.unsafe.implicits.global
+import hello.MyClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +41,7 @@ object Main {
   def io2Es[A](in : IO[A]) : EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
 
   val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
-  val myClient: Resource[cats.effect.IO, HelloWorldService[cats.effect.IO]] = example.MyClient.helloWorldClient(helloClient)
+  val myClient: Resource[cats.effect.IO, HelloWorldService[cats.effect.IO]] = MyClient.helloWorldClient(helloClient)
   
 
   val dataVar = Var[List[DataItem]](List(DataItem("one", 1.2)))

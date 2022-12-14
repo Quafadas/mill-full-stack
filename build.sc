@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.16.2`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.1`
 import $ivy.`com.lihaoyi::os-lib:0.8.0`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import $ivy.`com.github.vic::mill-dotenv:0.6.0`
@@ -31,7 +31,7 @@ import smithy4s.codegen.mill._
 // Allows mill to resolve the "meta-build"
 object Config {
   def scalaVersion = "3.2.0"
-  def scalaJSVersion = "1.11.0"
+  def scalaJSVersion = "1.12.0"
   def laminarVersion = "0.14.5"
   def circeVersion = "0.15.0-M1"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
@@ -39,7 +39,7 @@ object Config {
   val scribeVersion = "3.10.3"
 
   def sharedDependencies = Agg(
-    ivy"io.github.quafadas::dedav4s::0.8.0",
+    ivy"io.github.quafadas::dedav4s::0.8.1",
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
@@ -158,8 +158,6 @@ object backend extends Common { // with ScalafixModule
 
   //   override def dotenvSources = T.sources { os.pwd / ".env-test" }
   // }
-
-  def mainClass = Some("backend.Main")
 }
 
 object frontend extends Common with ScalaJSModule {
