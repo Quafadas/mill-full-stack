@@ -1,6 +1,6 @@
-namespace smithy4s.hello
+namespace hello
 
-use smithy4s.api#simpleRestJson
+use alloy#simpleRestJson
 
 @simpleRestJson
 service TodoService {

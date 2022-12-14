@@ -1,6 +1,6 @@
-package backend
+package hello
 
-import smithy4s.hello._
+import hello._
 import cats.effect.IO
 import cats.syntax.all._
 import scala.collection.mutable.ListBuffer

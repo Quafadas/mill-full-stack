@@ -1,4 +1,4 @@
-package backend
+package hello
 
 import cats.effect._
 import org.http4s._
@@ -8,7 +8,7 @@ import org.http4s.implicits._
 import com.comcast.ip4s._
 import smithy4s.http4s.swagger.docs
 import smithy4s.http4s.SimpleRestJsonBuilder
-import smithy4s.hello.{HelloWorldService, TodoService}
+import hello.{HelloWorldService, TodoService}
 import cats.implicits._
 import org.http4s.server.middleware._
 import org.http4s.server.staticcontent._
