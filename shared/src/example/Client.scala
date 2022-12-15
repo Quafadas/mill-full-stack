@@ -9,13 +9,19 @@ import cats.effect.Resource
 import hello.HelloWorldService
 import hello.TodoService
 
-object Clients {    
+import org.http4s.client.middleware.RequestLogger
+
+object Clients {
+
+  val logger = RequestLogger(logHeaders = true, logBody = true, logAction = Some(((str: String) => scribe.cats[IO].info(str) )) )
+
   def helloWorldClient(
       http4sClient: Client[IO]
   ): Resource[IO, HelloWorldService[IO]] =
+  
     SimpleRestJsonBuilder
         .apply(HelloWorldService)        
-        .client(http4sClient)
+        .client(logger(http4sClient))
         .uri(Uri.unsafeFromString("/"))
         .resource
 
@@ -24,7 +30,7 @@ object Clients {
   ): Resource[IO, TodoService[IO]] =
     SimpleRestJsonBuilder
         .apply(TodoService)
-        .client(http4sClient)
+        .client(logger(http4sClient))
         .uri(Uri.unsafeFromString("/"))
         .resource
 }

@@ -7,15 +7,32 @@ import scala.collection.mutable.ListBuffer
 
 object TodoImpl extends TodoService[IO] {
 
-    val todoDB : ListBuffer[Todo] = ListBuffer(Todo("1", "do something".some, false.some))
+    val startList = List(
+        "Check laminar docs",
+        "Check sap ui5 scala docs",
+        "Check less docs",
+        "Check vite.config.js for proxy config to backend",
+        "check smithy4s docs",
+        "check http4s docs",
+        "check mill docs",
+        "Google jobby tutorial for better advice including but not limited to database",
+        "check skunk docs",
+        "profit"
+    )
+
+    val todoDB : ListBuffer[Todo] = ListBuffer.from(
+        startList.zipWithIndex.map{case(s, idx) =>
+            Todo(s"$idx", s.some, false.some)
+        }
+    )
 
     def getTodo(id: String) = IO{
         todoDB.find(_.id == id).getOrElse(throw new BadInput(s"Todo with $id not found".some))
     }
 
-    def getTodos() = IO.pure{
-        Todos(todoDB.toList.some)        
-    }
+    def getTodos() = 
+        scribe.cats[IO].info("here") >>
+        IO.pure{Todos(todoDB.toList.some)}
 
     def createTodo(description: Option[String], complete: Option[Boolean]) =
         val newID = java.util.UUID.randomUUID.toString 

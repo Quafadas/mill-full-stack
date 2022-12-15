@@ -26,7 +26,7 @@ object Main extends IOApp {
     // todo : https://github.com/http4s/http4s/issues/2977
     def run(args: List[String]): IO[ExitCode] = 
 
-        val ui =  resourceServiceBuilder[IO]("").toRoutes        
+        val ui =  resourceServiceBuilder[IO]("/assets").toRoutes        
         
         val helloRoutes = SimpleRestJsonBuilder.routes(HelloWorldImpl).make
         val todoRoutes = SimpleRestJsonBuilder.routes(TodoImpl).make
@@ -35,10 +35,7 @@ object Main extends IOApp {
         
         val assetRouter = Router("/assets" -> ui)        
         val homeRoute = HttpRoutes.of[IO] {
-            case req @ GET -> Root =>
-                StaticFile.fromResource("index.html", req.some).getOrElseF(NotFound())
-            case req @ GET -> Root / "index.html" =>
-                //Ok("hi")
+            case req @ GET -> "ui" /: rest  =>                
                 StaticFile.fromResource("index.html", req.some).getOrElseF(NotFound())
         }
         
@@ -53,7 +50,10 @@ object Main extends IOApp {
                 println(" ---->> !!!! <<----")
                 // Probably we only really want to GZIP the bundle, rather than the API routes, but I don't really know how to do that, 
                 // so I'm just gzipping the whole thing.
-                val corsBypass = GZip(CORS.policy.withAllowOriginAll(routes))
+                val corsBypass = GZip(CORS.policy.withAllowOriginAll(
+                        ErrorHandling(routes)
+                    )
+                )
                 EmberServerBuilder.default[IO]
                 .withPort(port"8080")
                 .withHost(host"localhost")

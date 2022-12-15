@@ -1,14 +1,15 @@
 {
     "dependencies": {
-        "vega-embed": "^6.20.8",
         "@ui5/webcomponents": "1.8.0",
         "@ui5/webcomponents-fiori": "1.8.0",
-        "@ui5/webcomponents-icons": "1.8.0"
+        "@ui5/webcomponents-icons": "1.8.0",
+        "less": "^4.1.3",
+        "vega-embed": "^6.20.8"
     },
     "devDependencies": {
-        "@rollup/plugin-alias": "^3.1.9",        
+        "@rollup/plugin-alias": "^3.1.9",
         "typescript": "4.9.4",
-        "vite": "4.0.1"
+        "vite": "^4.0.1"
     },
     "scripts": {
         "dev": "vite dev",

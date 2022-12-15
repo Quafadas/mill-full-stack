@@ -31,22 +31,31 @@ import hello.Clients
 import hello.TodoService
 import hello.Todo
 
+import com.raquo.waypoint.Router
+
 object Main {
 
+  @JSExportTopLevel("main")
+  def main(): Unit = {
+    renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using AppPage.router))
+  }
+
+  def app(using router: Router[AppPage]) = 
+    div(
+      child <-- AppPage.renderPage
+    )  
+}
+
+object HomePage {
   def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
 
   val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
   val myClient: Resource[cats.effect.IO, TodoService[cats.effect.IO]] = Clients.todoClient(helloClient)
 
-  @JSExportTopLevel("main")
-  def main(): Unit = {
-    renderOnDomContentLoaded(dom.document.querySelector("#app"), appElement())
-  }
+  val todoList = Var[List[Todo]](List())
+  val getTodos = myClient.use(_.getTodos())
 
-  def appElement() = {
-
-    val todoList = Var[List[Todo]](List())
-    val getTodos = myClient.use(_.getTodos())
+  def render() =
     div(
       io2Es(getTodos.map(_.todos.get)) --> todoList.writer,
       Page(
@@ -57,13 +66,57 @@ object Main {
           // _.slots.startContent := Button(_.tooltip := "Go Home", _.icon := IconName.home),
           // _.slots.endContent := Button(_.tooltip := "Settings", _.icon := IconName.`action-settings`),
           Title(_.level := TitleLevel.H1, "To Do App")
-        ),        
-        div(          
+        ),
+        div(
+          p(
+            span("An example of a todo app. The list below is unordered by fabulousness."),
+            ul(
+              li(
+                Link("Laminar", _.href := "https://laminar.dev")
+              ),
+              li(
+                Link("SAP UI5 bindings", _.href := "https://sherpal.github.io/laminar-ui5-demo/?componentName=")
+              ),
+              li(
+                Link("Less", _.href := "https://lesscss.org/#")
+              ),              
+              li(
+                Link("Smithy4s", _.href := "https://disneystreaming.github.io/smithy4s/docs/overview/intro")
+              ),
+            ),
+            span("And aggressive plagarisation of the excellent ideas of others."),
+          ),          
+          renderDataTable(),
           p(
             child.text <-- todoList.signal.map(_.mkString(","))
           )
         )
       )
     )
-  }
+
+  def renderDataTable() = 
+    table(
+      cls := "todo-table",
+      thead(
+        cls := "todo-table-header",
+        tr(
+          th("Id"),
+          th("Description"),
+          th(),
+          th( 
+            Link(
+              div(
+                Icon(
+                  _.name := IconName.add,
+                  width := "24px",
+                  height := "24px"
+                )
+              )            
+            )
+          )
+        )        
+      ),
+      tr()
+    )
+
 }

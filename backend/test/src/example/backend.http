@@ -1,0 +1,5 @@
+
+GET http://localhost:8080/api/todo
+
+###
+GET http://localhost:5173/api/todo

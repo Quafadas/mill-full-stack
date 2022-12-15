@@ -162,10 +162,7 @@ object frontend extends Common with ScalaJSModule {
   def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(
     List(
-      "frontend",
-      "frontend.events",
-      "frontend.components",
-      "frontend.exposed"
+      "frontend"
     )
   )
 
