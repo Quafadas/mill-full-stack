@@ -126,7 +126,7 @@ object backend extends Common { // with ScalafixModule
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
 
-  def moduleDeps = Seq(shared)
+  def moduleDeps = Seq(shared.jvm)
 
   def assemblyRules = {
     // Run a the full frontend build
@@ -203,7 +203,7 @@ object frontend extends Common with ScalaJSModule {
   // )
 
   def moduleDeps = Seq(
-    shared
+    shared.js
   ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)
 
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
