@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.1`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.16.2`
 import $ivy.`com.lihaoyi::os-lib:0.8.0`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import $ivy.`com.github.vic::mill-dotenv:0.6.0`
@@ -25,6 +25,10 @@ import mill.scalajslib.api._
 import smithy4s.codegen.mill._
 
 // Allows mill to resolve the "meta-build"
+object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
+
+}
+
 object Config {
   def scalaVersion = "3.2.0"
   def scalaJSVersion = "1.12.0"
@@ -93,15 +97,26 @@ trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
   def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 }
 
-object shared extends Common with Smithy4sModule with ScalaJSModule {
-  def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
-  def scalaJSVersion = Config.scalaJSVersion
-  def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
+object shared extends Module {
+  object jvm extends Common with Smithy4sModule with CommonBuildSettings {
+    override def millSourcePath = super.millSourcePath / os.up
+    def smithy4sInputDir        = T.source { super.millSourcePath / os.up / "smithy" }
+    def ivyDeps                 = super.ivyDeps() ++ Config.sharedDependencies
+    object test extends Tests with TestModule.Munit with CommonBuildSettings {
 
-  object test extends Tests with TestModule.Munit {
-    def ivyDeps = Agg(
-      ivy"org.scalameta::munit::1.0.0-M6"
-    )
+      def sources = T.sources { super.millSourcePath / os.up / "test" }
+      // override def scalaJSVersion = Config.scalaJSVersion
+      override def scalaVersion = Config.scalaVersion
+      def ivyDeps = Agg(
+        ivy"org.scalameta::munit::1.0.0-M6"
+      )
+    }
+  }
+
+  object js extends Common with Smithy4sModule with CommonBuildSettings with ScalaJSModule {
+    override def millSourcePath = super.millSourcePath / os.up
+    def smithy4sInputDir        = T.source { super.millSourcePath / os.up / "smithy" }
+    def scalaJSVersion          = Config.scalaJSVersion
   }
 
 }
