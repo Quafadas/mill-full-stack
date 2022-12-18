@@ -12,3 +12,89 @@ ui5-link{
 th {
     font-size: 2em;
 }
+
+.exposed-page {
+	display: inline-grid;
+    width: 100%;
+
+    .exposed-body {
+        background-color: @background-color-body;
+        margin: 0 auto;
+        box-sizing: border-box; //uses outer width of div to calculate padding                
+        align-items: center;
+        grid-template-columns: fit-content(20vw) auto ;
+        display:inline-grid;
+        width: 100%;
+    }
+
+    .network-header h2{
+        justify-content: center;
+        justify-items: center;        
+        display: flex;
+        flex-direction: row;
+        
+        
+    }
+
+    ui5-multi-combobox {
+        box-sizing: border-box;
+        margin-left: 2vw;
+        margin-right: 2vw;
+        width: calc(100% - 4vw);
+    }
+
+    .centerContent {
+        justify-content: center;
+        justify-items: center;        
+        display: flex;
+        flex-direction: row;
+        
+        
+    .exposed-table-container {
+        box-sizing: border-box;        
+        background: #fff;
+        border-top: 5px solid #011d4b;
+        margin-bottom: 1vh;
+        margin-top: 1vh;
+        margin-right: auto;
+        margin-left: auto;
+        display: inline-block;
+        grid-row: 1;
+        grid-column: 2;
+        align-self: stretch;        
+        
+        align-items: center;        
+        
+        table.network-search-table {
+            border-collapse: collapse;
+            //box-sizing: border-box;
+            margin-left: @schroders-table-margin-left-right;
+            margin-right: @schroders-table-margin-left-right;
+            //box-sizing: border-box;                    
+
+            thead > tr {            
+                border-bottom-color: #1f3ea3;
+                border-bottom-width: 1px;
+                border-bottom-style: solid;                                
+                
+            }
+            tbody > tr {            
+                border-bottom-color: rgba(31,62,163,.25);
+                border-bottom-width: 1px;
+                border-bottom-style: solid;                
+                                                
+            }
+            td, th {
+                padding: 0.5vmin;
+            }
+
+            td.icon-center {
+                text-align: center;
+                vertical-align: center;
+            }
+        }
+    }
+
+    }
+
+}
