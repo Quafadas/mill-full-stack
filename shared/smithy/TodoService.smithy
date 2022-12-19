@@ -68,6 +68,7 @@ structure BadInput {
 
 structure NewTodo {
   description: String,
+  @required
   complete: Boolean
 }
 
@@ -76,6 +77,7 @@ structure Todo {
   @required
   id: String,
   description: String,
+  @required  
   complete: Boolean
 }
 

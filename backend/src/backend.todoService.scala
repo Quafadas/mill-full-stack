@@ -22,7 +22,7 @@ object TodoImpl extends TodoService[IO] {
 
     val todoDB : ListBuffer[Todo] = ListBuffer.from(
         startList.zipWithIndex.map{case(s, idx) =>
-            Todo(s"$idx", s.some, false.some)
+            Todo(s"$idx", false, s.some)
         }
     )
 
@@ -34,20 +34,21 @@ object TodoImpl extends TodoService[IO] {
         scribe.cats[IO].info("here") >>
         IO.pure{Todos(todoDB.toList.some)}
 
-    def createTodo(description: Option[String], complete: Option[Boolean]) =
+    def createTodo( complete: Boolean, description: Option[String]) =
         val newID = java.util.UUID.randomUUID.toString 
-        val newT = Todo(newID, description, complete)
+        val newT = Todo(id = newID, complete = complete, description )
         todoDB.addOne(newT)
         IO.pure(newT)
 
-    def updateTodo(id: String, description: Option[String], complete: Option[Boolean]) = 
-        val newT = Todo(id, description, complete)
+    def updateTodo(id: String, complete: Boolean, description: Option[String]) = 
+        val newT = Todo(id = id, complete = complete, description = description )
         todoDB.find(_.id == id).getOrElse(throw new BadInput(s"Todo with $id not found".some))
         todoDB.dropWhileInPlace(_.id == id)
         todoDB.addOne(newT)
         IO.pure(newT)
 
-    def deleteTodo(id: String) =         
+    def deleteTodo(id: String) = 
+        scribe.info(s"delete $id")
         val count = todoDB.count(_.id == id)
         todoDB.dropWhileInPlace(_.id == id)
         IO.pure(TodoDeletedCount(count))

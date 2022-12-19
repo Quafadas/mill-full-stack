@@ -6,6 +6,7 @@ import scala.scalajs.js.JSConverters.*
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
+import io.laminext.syntax.core._
 
 import io.circe.{Encoder, Decoder}
 import io.circe.syntax._
@@ -32,6 +33,8 @@ import hello.TodoService
 import hello.Todo
 
 import com.raquo.waypoint.Router
+import java.awt.Checkbox
+import be.doeraene.webcomponents.ui5.configkeys.IconName.strikethrough
 
 object Main {
 
@@ -40,10 +43,10 @@ object Main {
     renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using AppPage.router))
   }
 
-  def app(using router: Router[AppPage]) = 
+  def app(using router: Router[AppPage]) =
     div(
       child <-- AppPage.renderPage
-    )  
+    )
 }
 
 object HomePage {
@@ -53,11 +56,17 @@ object HomePage {
   val myClient: Resource[cats.effect.IO, TodoService[cats.effect.IO]] = Clients.todoClient(helloClient)
 
   val todoList = Var[List[Todo]](List())
-  val getTodos = myClient.use(_.getTodos())
+  val getTodos = io2Es(myClient.use(_.getTodos()))
+  def deleteAction(id:String) =     
+    Observer[Unit]{ _ =>
+      scribe.info("here")
+      io2Es(myClient.use( c => c.deleteTodo(id) ))
+    }
 
   def render() =
     div(
-      io2Es(getTodos.map(_.todos.get)) --> todoList.writer,
+      cls := "page-container",
+      getTodos.map(_.todos.get) --> todoList.writer,
       Page(
         width := "100vw",
         height := "100vh",
@@ -68,6 +77,7 @@ object HomePage {
           Title(_.level := TitleLevel.H1, "To Do App")
         ),
         div(
+          cls := "inner-home-container",
           p(
             span("An example of a todo app. The list below is unordered by fabulousness."),
             ul(
@@ -79,13 +89,13 @@ object HomePage {
               ),
               li(
                 Link("Less", _.href := "https://lesscss.org/#")
-              ),              
+              ),
               li(
                 Link("Smithy4s", _.href := "https://disneystreaming.github.io/smithy4s/docs/overview/intro")
-              ),
+              )
             ),
-            span("And aggressive plagarisation of the excellent ideas of others."),
-          ),          
+            span("A template based almost entirely on aggressive plagarisation of the excellent ideas of others. ")
+          ),
           renderDataTable(),
           p(
             child.text <-- todoList.signal.map(_.mkString(","))
@@ -94,29 +104,93 @@ object HomePage {
       )
     )
 
-  def renderDataTable() = 
-    table(
-      cls := "todo-table",
-      thead(
-        cls := "todo-table-header",
-        tr(
-          th("Id"),
-          th("Description"),
-          th(),
-          th( 
-            Link(
-              div(
-                Icon(
-                  _.name := IconName.add,
-                  width := "24px",
-                  height := "24px"
-                )
-              )            
+  def renderDataTable() =
+    div(
+      cls := "todo-table-container",
+      table(
+        cls := "todo-table",
+        thead(
+          cls := "todo-table-header",
+          tr(
+            th("Id"),
+            th("Description"),
+            th("Done"),
+            th(""),
+            th(
+              span(
+                linkIcon(IconName.add)
+              )
             )
           )
-        )        
-      ),
-      tr()
+        ),
+        children <-- todoList.signal.split(_.id)(renderTodo)
+      )
     )
 
+  def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo]) =
+    val isEditing = Var(false)
+    val editedValue = Var[String]("")
+
+    tr(
+      td(
+        cls := "bigText",
+        id
+      ),
+      td(        
+        Input(
+          width := "35vw",
+          _.readonly <-- isEditing.signal.map(!_),
+          _.events.onChange.mapToValue --> editedValue.writer,
+          value <-- todoS.map(_.description.getOrElse(""))         
+        )
+      ),
+      td(
+        cls := "centered",
+        CheckBox(
+          _.checked <-- todoS.map(_.complete)
+        )
+      ),
+      td(        
+        th(
+          isEditing.signal.childWhenTrue(
+            div(
+              linkIcon(
+                IconName.save
+              )
+              // onClick --> saveNew value
+            )
+          ),
+          isEditing.signal.childWhenFalse(
+            linkIcon(
+              IconName.edit
+            )
+          ),          
+          onClick --> isEditing.updater((cur, _) => !cur),          
+          // child.text <-- isEditing
+        )
+      ),
+      td(        
+        th(
+          linkIcon(
+            IconName.delete,
+            deleteAction(id)
+          )
+        )
+      )
+    )
+
+
+
 }
+
+def linkIcon(iconName: IconName, doSomething: Observer[Unit] = Observer[Unit]{Unit => ()} ) =
+  Link(
+    Icon(
+      _.name := iconName,
+      width := "24px",
+      height := "24px"
+    ),
+    onClick.mapToUnit --> doSomething
+  )
+
+
