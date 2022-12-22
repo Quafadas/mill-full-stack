@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.16.2`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.1`
 import $ivy.`com.lihaoyi::os-lib:0.8.0`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import $ivy.`com.github.vic::mill-dotenv:0.6.0`
@@ -24,10 +24,10 @@ import mill.scalajslib.api._
 
 import smithy4s.codegen.mill._
 
-// Allows mill to resolve the "meta-build"
-object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
+// Allows mill to resolve the "meta-build" behind a corporate proxy
+// object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
 
-}
+// }
 
 object Config {
   def scalaVersion = "3.2.0"
@@ -67,7 +67,7 @@ object Config {
 
   def jsDependencies = Agg(
     ivy"""com.raquo::laminar::0.14.5""",
-    ivy"""com.github.sherpal:LaminarSAPUI5Bindings:1.3.0-8f02a832""",
+    ivy"""be.doeraene::web-components-ui5::1.8.0""",
     ivy"""com.raquo::waypoint::0.5.0""",
     ivy"org.scala-js::scalajs-dom::2.3.0",
     ivy"org.scala-js:scalajs-java-securerandom_sjs1_2.13:1.0.0",
@@ -77,10 +77,9 @@ object Config {
   )
 }
 
-trait CommonBuildSettings extends ScalaModule {
-  // def semanticDbVersion = "4.5.0"
-  def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
-  def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
+trait CommonBuildSettings extends ScalaModule {  
+  //def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
+//  def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
   def scalaVersion = Config.scalaVersion
 }
 
@@ -88,7 +87,7 @@ trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
   // def repositories = super.repositories ++ Seq(
   // MavenRepository("https://jitpack.io")
   // )
-  def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
+  //def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
 
   def scalaVersion = Config.scalaVersion
 
@@ -117,6 +116,7 @@ object shared extends Module {
     override def millSourcePath = super.millSourcePath / os.up
     def smithy4sInputDir        = T.source { super.millSourcePath / os.up / "smithy" }
     def scalaJSVersion          = Config.scalaJSVersion
+    def ivyDeps                 = super.ivyDeps() ++ Config.sharedDependencies
   }
 
 }
@@ -172,7 +172,7 @@ object backend extends Common { // with ScalafixModule
 }
 
 object frontend extends Common with ScalaJSModule {
-  def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
+  //def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def scalaJSVersion = Config.scalaJSVersion
   def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(
@@ -187,21 +187,6 @@ object frontend extends Common with ScalaJSModule {
   def publicProd = T {
     public(fullLinkJS)()
   }
-
-  // override def generatedSources: T[Seq[PathRef]] = T {
-  //    val (scalaOutput, _) = shared.smithy4sCodegen()
-  //    scalaOutput +: super.generatedSources()
-  // }
-
-  // override def smithy4sInputDir: T[PathRef] = T.source {
-  //   PathRef(shared.millSourcePath / "smithy")
-  // }
-
-  // def sources = T.sources(
-  //   millSourcePath / "src",
-  //   millSourcePath / os.up / "shared" / "src"
-  // )
-
   def moduleDeps = Seq(
     shared.js
   ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)

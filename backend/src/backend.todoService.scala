@@ -7,6 +7,9 @@ import scala.collection.mutable.ListBuffer
 
 object TodoImpl extends TodoService[IO] {
 
+    extension (s:String)
+        def todoId = TodoId(s)
+
     val startList = List(
         "Check laminar docs",
         "Check sap ui5 scala docs",
@@ -22,12 +25,12 @@ object TodoImpl extends TodoService[IO] {
 
     val todoDB : ListBuffer[Todo] = ListBuffer.from(
         startList.zipWithIndex.map{case(s, idx) =>
-            Todo(s"$idx", false, s.some)
+            Todo(s"$idx".todoId, false, s.some)
         }
     )
 
     def getTodo(id: String) = IO{
-        todoDB.find(_.id == id).getOrElse(throw new BadInput(s"Todo with $id not found".some))
+        todoDB.find(_.id.value == id).getOrElse(throw new Exception(s"Todo with $id not found"))
     }
 
     def getTodos() = 
@@ -36,21 +39,21 @@ object TodoImpl extends TodoService[IO] {
 
     def createTodo( complete: Boolean, description: Option[String]) =
         val newID = java.util.UUID.randomUUID.toString 
-        val newT = Todo(id = newID, complete = complete, description )
+        val newT = Todo(id = newID.todoId, complete = complete, description )
         todoDB.addOne(newT)
         IO.pure(newT)
 
-    def updateTodo(id: String, complete: Boolean, description: Option[String]) = 
+    def updateTodo(id: TodoId, complete: Boolean, description: Option[String]) = 
         val newT = Todo(id = id, complete = complete, description = description )
-        todoDB.find(_.id == id).getOrElse(throw new BadInput(s"Todo with $id not found".some))
+        todoDB.find(_.id == id).getOrElse(throw new Exception(s"Todo with $id not found"))
         todoDB.dropWhileInPlace(_.id == id)
         todoDB.addOne(newT)
         IO.pure(newT)
 
     def deleteTodo(id: String) = 
         scribe.info(s"delete $id")
-        val count = todoDB.count(_.id == id)
-        todoDB.dropWhileInPlace(_.id == id)
-        IO.pure(TodoDeletedCount(count))
+        val count = todoDB.count(_.id == id.todoId)
+        todoDB.dropWhileInPlace(_.id == id.todoId)
+        IO.pure(TodoDeleted(id.todoId))
 
 }

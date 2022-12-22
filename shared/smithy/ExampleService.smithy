@@ -5,16 +5,14 @@ use alloy#simpleRestJson
 @simpleRestJson
 service HelloWorldService {
   version: "1.0.0",
-  operations: [Hello, Greet],
-  errors: [BadInput]
+  operations: [Hello, Greet]
 }
 
 @readonly
 @http(method: "GET", uri: "/api/hello/{name}")
 operation Greet {
   input: GreetInput,
-  output: GreetOutput,
-  errors: [BadInput]
+  output: GreetOutput
 }
 
 @http(method: "POST", uri: "/api/{name}", code: 200)

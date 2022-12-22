@@ -36,6 +36,9 @@ import com.raquo.waypoint.Router
 import java.awt.Checkbox
 import be.doeraene.webcomponents.ui5.configkeys.IconName.strikethrough
 
+
+def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
+
 object Main {
 
   @JSExportTopLevel("main")
@@ -50,7 +53,7 @@ object Main {
 }
 
 object HomePage {
-  def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
+
 
   val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
   val myClient: Resource[cats.effect.IO, TodoService[cats.effect.IO]] = Clients.todoClient(helloClient)
@@ -123,7 +126,7 @@ object HomePage {
             )
           )
         ),
-        children <-- todoList.signal.split(_.id)(renderTodo)
+        children <-- todoList.signal.split(_.id.value)(renderTodo)
       )
     )
 

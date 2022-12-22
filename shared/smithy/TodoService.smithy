@@ -2,11 +2,19 @@ namespace hello
 
 use alloy#simpleRestJson
 
+@trait
+structure metadata {
+  @required
+  description: String
+}
+
+@metadata(description: "This is my own integer shape")
+string TodoId
+
 @simpleRestJson
 service TodoService {
   version: "1.0.0",
-  operations: [GetTodo, GetTodos, UpdateTodo, CreateTodo, DeleteTodo],
-  errors: [BadInput]
+  operations: [GetTodo, GetTodos, UpdateTodo, CreateTodo, DeleteTodo]
 }
 
 @readonly
@@ -19,31 +27,27 @@ operation GetTodos {
 @http(method: "GET", uri: "/api/todo/{id}")
 operation GetTodo {
   input: TodoInput,
-  output: Todo,
-  errors: [BadInput]
+  output: Todo
 }
 
 @http(method: "POST", uri: "/api/todo/{id}")
 operation UpdateTodo {    
   input: Todo, 
-  output: Todo,
-  errors: [BadInput]
+  output: Todo
 }
 
 @idempotent
 @http(method: "PUT", uri: "/api/todo")
 operation CreateTodo {    
   input: NewTodo, 
-  output: Todo,
-  errors: [BadInput]
+  output: Todo
 }
 
 @idempotent
 @http(method: "DELETE", uri: "/api/todo/{id}")
 operation DeleteTodo {    
   input: TodoInput, 
-  output: TodoDeletedCount,
-  errors: [BadInput]
+  output: TodoDeleted
 }
 
 structure TodoInput {
@@ -52,19 +56,12 @@ structure TodoInput {
   id:String
 }
 
-structure TodoDeletedCount {
+structure TodoDeleted {
   @httpLabel
   @required
-  count: Integer
+  id: TodoId
 }
 
-
-@error("client")
-@httpError(480)
-structure BadInput {
-  @jsonName("error")
-  message: String
-}
 
 structure NewTodo {
   description: String,
@@ -75,7 +72,7 @@ structure NewTodo {
 structure Todo {
   @httpLabel
   @required
-  id: String,
+  id: TodoId,
   description: String,
   @required  
   complete: Boolean
