@@ -7,6 +7,7 @@ import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import io.laminext.syntax.core._
+import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
 import io.circe.syntax._
@@ -35,7 +36,10 @@ import hello.Todo
 import com.raquo.waypoint.Router
 import java.awt.Checkbox
 import be.doeraene.webcomponents.ui5.configkeys.IconName.strikethrough
-
+import hello.TodoId
+import scala.concurrent.duration.Duration.apply
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 
 def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
 
@@ -54,20 +58,63 @@ object Main {
 
 object HomePage {
 
-
   val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
   val myClient: Resource[cats.effect.IO, TodoService[cats.effect.IO]] = Clients.todoClient(helloClient)
 
   val todoList = Var[List[Todo]](List())
   val getTodos = io2Es(myClient.use(_.getTodos()))
-  def deleteAction(id:String) =     
-    Observer[Unit]{ _ =>
-      scribe.info("here")
-      io2Es(myClient.use( c => c.deleteTodo(id) ))
+
+  val removeTodoBus = EventBus[String]
+  val removeTodo = removeTodoBus.events.map(id => todoList.update(curr => curr.filter(_.id.value != id)))
+
+  lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
+
+  def deleteAction =
+    Observer[String] { s =>
+      io2Es(
+        myClient.use(c =>
+          c.deleteTodo(s)
+            .redeem(err => errorBus.emit(err), id => todoListRemove(id.id))
+        )
+      )
     }
+
+  def addAction =
+    Observer[Unit] { s =>
+      io2Es(
+        myClient.use(c =>
+          c.createTodo(false, "".some)
+            .map(newThing =>
+              throw new Exception("My backend is rubbish")
+              newThing
+            )
+            .redeem(
+              err => {
+                errorBus.emit(err)
+              },
+              newTodo => todoListAdd(newTodo)
+            )
+        )
+      )
+    }
+
+  def todoListRemove(id: TodoId) =
+    todoList.update(currentList => currentList.filter(_.id != id))
+
+  def todoListAdd(newTodo: Todo) =
+    todoList.update(currentList => currentList :+ newTodo)
 
   def render() =
     div(
+      errorBus --> Observer[Throwable] { err =>
+        scribe.error(err)
+      },
+      Toast(
+        inContext(el => errorBus.events.mapTo(()) --> Observer[Unit](_ => el.ref.show())),
+        _.placement := ToastPlacement.MiddleCenter,
+        _.duration := FiniteDuration(3L, "seconds"),
+        "An error has occured, it has been recorded in the console log. Your interactions with this page may have been lost. Consider refreshing the page. If this error persists, fetch help... "
+      ),
       cls := "page-container",
       getTodos.map(_.todos.get) --> todoList.writer,
       Page(
@@ -121,7 +168,7 @@ object HomePage {
             th(""),
             th(
               span(
-                linkIcon(IconName.add)
+                linkIcon(IconName.add, addAction)
               )
             )
           )
@@ -139,12 +186,12 @@ object HomePage {
         cls := "bigText",
         id
       ),
-      td(        
+      td(
         Input(
           width := "35vw",
           _.readonly <-- isEditing.signal.map(!_),
           _.events.onChange.mapToValue --> editedValue.writer,
-          value <-- todoS.map(_.description.getOrElse(""))         
+          value <-- todoS.map(_.description.getOrElse(""))
         )
       ),
       td(
@@ -153,7 +200,7 @@ object HomePage {
           _.checked <-- todoS.map(_.complete)
         )
       ),
-      td(        
+      td(
         th(
           isEditing.signal.childWhenTrue(
             div(
@@ -167,26 +214,27 @@ object HomePage {
             linkIcon(
               IconName.edit
             )
-          ),          
-          onClick --> isEditing.updater((cur, _) => !cur),          
+          ),
+          onClick --> isEditing.updater((cur, _) => !cur)
           // child.text <-- isEditing
         )
       ),
-      td(        
+      td(
         th(
-          linkIcon(
-            IconName.delete,
-            deleteAction(id)
+          Link(
+            Icon(
+              _.name := IconName.delete,
+              width := "24px",
+              height := "24px"
+            ),
+            onClick.mapTo(id) --> deleteAction
           )
         )
       )
     )
-
-
-
 }
 
-def linkIcon(iconName: IconName, doSomething: Observer[Unit] = Observer[Unit]{Unit => ()} ) =
+def linkIcon(iconName: IconName, doSomething: Observer[Unit] = Observer[Unit] { Unit => () }) =
   Link(
     Icon(
       _.name := iconName,
@@ -195,5 +243,3 @@ def linkIcon(iconName: IconName, doSomething: Observer[Unit] = Observer[Unit]{Un
     ),
     onClick.mapToUnit --> doSomething
   )
-
-
