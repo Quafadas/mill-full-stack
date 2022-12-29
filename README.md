@@ -26,7 +26,7 @@ The first compilation will like be rather slow. Incremental change has been for 
 1. smithy4s
 2. laminar
 
-Those two choices basically dicatate most of the other parts of build.sc. The frontend is driven through [vite](https://vitejs.dev).
+Those two choices basically dictate most of the other parts of build.sc. The frontend is driven through [vite](https://vitejs.dev).
 
 # Handy references
 https://softwaremill.com/practical-guide-to-error-handling-in-scala-cats-and-cats-effect/

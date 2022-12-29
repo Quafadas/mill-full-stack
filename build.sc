@@ -1,12 +1,13 @@
 import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.1`
-import $ivy.`com.lihaoyi::os-lib:0.8.0`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import $ivy.`com.github.vic::mill-dotenv:0.6.0`
-import $ivy.`com.goyeau::mill-scalafix::0.2.9`
+import $ivy.`com.goyeau::mill-scalafix::0.2.11`
+import $ivy.`com.github.lolgab::mill-crossplatform::0.1.1`
 
 import $file.CustomZincWorkerModule
 
 import com.goyeau.mill.scalafix.ScalafixModule
+import com.github.lolgab.mill.crossplatform._
 
 import coursier.maven.MavenRepository
 
@@ -30,7 +31,7 @@ import smithy4s.codegen.mill._
 // }
 
 object Config {
-  def scalaVersion = "3.2.0"
+  def scalaVersion = "3.2.1"
   def scalaJSVersion = "1.12.0"
   def laminarVersion = "0.14.5"
   def circeVersion = "0.15.0-M1"
@@ -70,24 +71,24 @@ object Config {
     ivy"""be.doeraene::web-components-ui5::1.8.0""",
     ivy"""com.raquo::waypoint::0.5.0""",
     ivy"org.scala-js::scalajs-dom::2.3.0",
-    ivy"org.scala-js:scalajs-java-securerandom_sjs1_2.13:1.0.0",
+    ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
     ivy"org.http4s::http4s-dom::0.2.3",
     ivy"org.http4s::http4s-client::${http4sVersion}",
     ivy"io.laminext::core::0.14.4"
   )
 }
 
-trait CommonBuildSettings extends ScalaModule {  
-  //def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
-//  def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
+trait CommonBuildSettings extends ScalaModule {
+  // def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
+  // def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
   def scalaVersion = Config.scalaVersion
 }
 
 trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
   // def repositories = super.repositories ++ Seq(
-  // MavenRepository("https://jitpack.io")
+  //   MavenRepository("https://jitpack.io")
   // )
-  //def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
+  // def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
 
   def scalaVersion = Config.scalaVersion
 
@@ -95,30 +96,23 @@ trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
 
   def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 }
+trait CommonJS extends Common with ScalaJSModule {
+  def scalaJSVersion = Config.scalaJSVersion
+}
 
-object shared extends Module {
-  object jvm extends Common with Smithy4sModule with CommonBuildSettings {
-    override def millSourcePath = super.millSourcePath / os.up
-    def smithy4sInputDir        = T.source { super.millSourcePath / os.up / "smithy" }
-    def ivyDeps                 = super.ivyDeps() ++ Config.sharedDependencies
-    object test extends Tests with TestModule.Munit with CommonBuildSettings {
-
-      def sources = T.sources { super.millSourcePath / os.up / "test" }
-      // override def scalaJSVersion = Config.scalaJSVersion
-      override def scalaVersion = Config.scalaVersion
+object shared extends CrossPlatform {
+  trait Shared extends CrossPlatformScalaModule with Common with Smithy4sModule with CommonBuildSettings {
+    def smithy4sInputDir = T.source { millSourcePath / os.up / "smithy" }
+    def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
+  }
+  object jvm extends Shared {
+    object test extends CrossPlatformSources with Tests with TestModule.Munit {
       def ivyDeps = Agg(
         ivy"org.scalameta::munit::1.0.0-M6"
       )
     }
   }
-
-  object js extends Common with Smithy4sModule with CommonBuildSettings with ScalaJSModule {
-    override def millSourcePath = super.millSourcePath / os.up
-    def smithy4sInputDir        = T.source { super.millSourcePath / os.up / "smithy" }
-    def scalaJSVersion          = Config.scalaJSVersion
-    def ivyDeps                 = super.ivyDeps() ++ Config.sharedDependencies
-  }
-
+  object js extends Shared with CommonJS
 }
 
 object backend extends Common { // with ScalafixModule
@@ -171,15 +165,10 @@ object backend extends Common { // with ScalafixModule
   // }
 }
 
-object frontend extends Common with ScalaJSModule {
-  //def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
-  def scalaJSVersion = Config.scalaJSVersion
+object frontend extends CommonJS {
+  // def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def moduleKind = ModuleKind.ESModule
-  def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(
-    List(
-      "frontend"
-    )
-  )
+  def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
 
   def publicDev = T {
     public(fastLinkJS)()
@@ -194,15 +183,8 @@ object frontend extends Common with ScalaJSModule {
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
 }
 
-// Needed for the frontend publicDev / publicProd tasks...
-case class Alias(find: String, replacement: os.Path)
-object Alias {
-  import upickle.default._
-  implicit val rw: ReadWriter[Alias] = macroRW
-}
-
-private def public(jsTask: Task[Report]): Task[Seq[Alias]] = T.task {
+private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
   val jsDir = jsTask().dest.path
   // println(s"jsDir: $jsDir")
-  Seq(Alias("@public", jsDir))
+  Map("@public" -> jsDir)
 }
