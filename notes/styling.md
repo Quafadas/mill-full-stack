@@ -1,1 +1,1 @@
-Via [less](https://lesscss.org) where necessary, but UI components do a _lot_ for you. Cool part is instantly observing change in browser
+Via [less](https://lesscss.org) where necessary, but UI components do a _lot_ for you. Cool part is instantly observing change in browser.
