@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "runDev",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "backend",
+                "frontend",
+                "frontendDevServer"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "backend",
+            "type": "shell",
+            "command": "./mill -w backend.runBackground",
+            "presentation": {
+                "panel": "dedicated",
+                "group": "runDevCmd"
+            },
+            "group": "build"            
+        },
+        {
+            "label": "frontend",
+            "type": "shell",
+            "command": "./mill -w frontend.publicDev",
+            "presentation": {
+                "panel": "dedicated",
+                "group": "runDevCmd"
+            },
+            "group": "build"
+        },
+        {
+            "label": "frontendDevServer",
+            "type": "shell",
+            "command": "npm run dev --open",
+            "presentation": {
+                "panel": "dedicated",
+                "group": "runDevCmd"
+            },
+            "group": "build"
+        }
+    ]
+}
