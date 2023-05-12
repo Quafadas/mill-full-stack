@@ -79,10 +79,11 @@ structure Todo {
 }
 
 structure Todos {
+  @required
   todos: TodoList
 }
 
 
-list TodoList {
+list TodoList {  
   member: Todo
 }

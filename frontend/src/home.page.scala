@@ -40,83 +40,31 @@ import hello.TodoId
 import scala.concurrent.duration.Duration.apply
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
+import hello.Todos
+import javax.print.attribute.standard.DialogTypeSelection
 
-def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
 
-object Main {
-
-  @JSExportTopLevel("main")
-  def main(): Unit = {
-    renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using AppPage.router))
-  }
-
-  def app(using router: Router[AppPage]) =
-    div(
-      child <-- AppPage.renderPage
-    )
-}
 
 object HomePage {
 
-  val helloClient: org.http4s.client.Client[IO] = FetchClientBuilder[IO].create
-  val myClient: Resource[cats.effect.IO, TodoService[cats.effect.IO]] = Clients.todoClient(helloClient)
-
-  val todoList = Var[List[Todo]](List())
-  val getTodos = io2Es(myClient.use(_.getTodos()))
-
-  val removeTodoBus = EventBus[String]
+  val todoList = Var[List[Todo]](List()) 
+  val removeTodoBus = EventBus[String]()
   val removeTodo = removeTodoBus.events.map(id => todoList.update(curr => curr.filter(_.id.value != id)))
 
   lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
 
-  def deleteAction =
-    Observer[String] { s =>
-      io2Es(
-        myClient.use(c =>
-          c.deleteTodo(s)
-            .redeem(err => errorBus.emit(err), id => todoListRemove(id.id))
-        )
-      )
-    }
-
-  def addAction =
-    Observer[Unit] { s =>
-      io2Es(
-        myClient.use(c =>
-          c.createTodo(false, "".some)
-            .map(newThing =>
-              throw new Exception("My backend is rubbish")
-              newThing
-            )
-            .redeem(
-              err => {
-                errorBus.emit(err)
-              },
-              newTodo => todoListAdd(newTodo)
-            )
-        )
-      )
-    }
-
-  def todoListRemove(id: TodoId) =
-    todoList.update(currentList => currentList.filter(_.id != id))
-
-  def todoListAdd(newTodo: Todo) =
-    todoList.update(currentList => currentList :+ newTodo)
-
-  def render() =
+  def render()(using api: Api, router: Router[Pages]) =    
     div(
       errorBus --> Observer[Throwable] { err =>
         scribe.error(err)
       },
-      Toast(
+      Dialog(
         inContext(el => errorBus.events.mapTo(()) --> Observer[Unit](_ => el.ref.show())),
-        _.placement := ToastPlacement.MiddleCenter,
-        _.duration := FiniteDuration(3L, "seconds"),
-        "An error has occured, it has been recorded in the console log. Your interactions with this page may have been lost. Consider refreshing the page. If this error persists, fetch help... "
+        _.state := ValueState.Error ,
+        "An error has occured, it has been recorded in the console log. Your interactions with this page may have been lost. Please refresh the page (press f5). If this error persists, fetch help... "
       ),
       cls := "page-container",
-      getTodos.map(_.todos.get) --> todoList.writer,
+      api.stream(_.todo.getTodos()) --> todoList.writer.contramap[Todos](_.todos),
       Page(
         width := "100vw",
         height := "100vh",
@@ -154,7 +102,7 @@ object HomePage {
       )
     )
 
-  def renderDataTable() =
+  def renderDataTable()(using api: Api) =
     div(
       cls := "todo-table-container",
       table(
@@ -162,7 +110,7 @@ object HomePage {
         thead(
           cls := "todo-table-header",
           tr(
-            th("Id"),
+            th("Id hi"),
             th("Description"),
             th("Done"),
             th(""),
@@ -177,7 +125,7 @@ object HomePage {
       )
     )
 
-  def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo]) =
+  def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo])(using api: Api) =
     val isEditing = Var(false)
     val editedValue = Var[String]("")
 
@@ -232,14 +180,21 @@ object HomePage {
         )
       )
     )
+
+  def deleteAction(using api: Api) =
+    Observer[String] { s =>
+      api.stream(_.todo.deleteTodo(s))
+    }
+
+  def addAction(using api: Api) =
+    Observer[Unit] { s =>
+      api.stream(_.todo.createTodo(false, None))
+    }
+
+  def todoListRemove(id: TodoId) =
+    todoList.update(currentList => currentList.filter(_.id != id))
+
+  def todoListAdd(newTodo: Todo) =
+    todoList.update(currentList => currentList :+ newTodo)
 }
 
-def linkIcon(iconName: IconName, doSomething: Observer[Unit] = Observer[Unit] { Unit => () }) =
-  Link(
-    Icon(
-      _.name := iconName,
-      width := "24px",
-      height := "24px"
-    ),
-    onClick.mapToUnit --> doSomething
-  )

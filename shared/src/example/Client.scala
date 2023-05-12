@@ -35,7 +35,17 @@ object Clients {
         .resource
 }
 
-object TodoClient {    
+object TodoClient { 
+
+    def todoClient(
+      http4sClient: Client[IO]
+  ) : TodoService[IO] =
+    SimpleRestJsonBuilder
+        .apply(TodoService)
+        .client(http4sClient)
+        .uri(Uri.unsafeFromString("/"))
+        .use
+        .fold(throw _, identity)
 
 }
 

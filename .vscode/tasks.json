@@ -30,7 +30,7 @@
         {
             "label": "frontend",
             "type": "shell",
-            "command": "./mill -w frontend.publicDev",
+            "command": "./mill -w frontend.dev",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"

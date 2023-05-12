@@ -35,7 +35,7 @@ object TodoImpl extends TodoService[IO] {
 
     def getTodos() = 
         scribe.cats[IO].info("here") >>
-        IO.pure{Todos(todoDB.toList.some)}
+        IO.pure{Todos(todoDB.toList)}
 
     def createTodo( complete: Boolean, description: Option[String]) =
         val newID = java.util.UUID.randomUUID.toString 

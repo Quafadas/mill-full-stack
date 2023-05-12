@@ -1,8 +1,9 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.1`
-import $ivy.`com.lihaoyi::mill-contrib-bloop:`
+import $file.scalablyTyped
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.17.6`
+//import $ivy.`com.lihaoyi::mill-contrib-bloop:`
 import $ivy.`com.github.vic::mill-dotenv:0.6.0`
 import $ivy.`com.goyeau::mill-scalafix::0.2.11`
-import $ivy.`com.github.lolgab::mill-crossplatform::0.1.1`
+import $ivy.`com.github.lolgab::mill-crossplatform::0.2.2`
 
 import $file.CustomZincWorkerModule
 
@@ -21,7 +22,7 @@ import mill.scalalib._
 import mill.scalajslib._
 import mill.scalajslib.api._
 
-//import mill.dotenv._
+import mill.dotenv._
 
 import smithy4s.codegen.mill._
 
@@ -31,12 +32,12 @@ import smithy4s.codegen.mill._
 // }
 
 object Config {
-  def scalaVersion = "3.2.1"
-  def scalaJSVersion = "1.12.0"
-  def laminarVersion = "0.14.5"
-  def circeVersion = "0.15.0-M1"
+  def scalaVersion = scalablyTyped.Versions.scalaVersion
+  def scalaJSVersion = scalablyTyped.Versions.scalaJSVersion
+  def laminarVersion = "15.0.1"
+  def circeVersion = "0.14.5"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
-  val http4sVersion = "0.23.16"
+  val http4sVersion = "0.23.18"
   val scribeVersion = "3.10.3"
 
   def sharedDependencies = Agg(
@@ -44,8 +45,8 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
-    ivy"com.outr::scribe-cats::$scribeVersion",
-    ivy"com.lihaoyi::upickle::2.0.0"
+    ivy"com.outr::scribe-cats::$scribeVersion",    
+    //ivy"com.lihaoyi::upickle::3.1.0"
   ) ++ Agg(
     "io.circe::circe-core:",
     "io.circe::circe-generic:",
@@ -67,14 +68,14 @@ object Config {
   )
 
   def jsDependencies = Agg(
-    ivy"""com.raquo::laminar::0.14.5""",
-    ivy"""be.doeraene::web-components-ui5::1.8.0""",
-    ivy"""com.raquo::waypoint::0.5.0""",
+    ivy"""com.raquo::laminar::$laminarVersion""",
+    ivy"""be.doeraene::web-components-ui5::1.10.0""",
+    ivy"""com.raquo::waypoint::6.0.0""",
     ivy"org.scala-js::scalajs-dom::2.3.0",
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
-    ivy"org.http4s::http4s-dom::0.2.3",
+    ivy"org.http4s::http4s-dom::0.2.8",
     ivy"org.http4s::http4s-client::${http4sVersion}",
-    ivy"io.laminext::core::0.14.4"
+    ivy"io.laminext::core::0.15.0"
   )
 }
 
@@ -100,7 +101,7 @@ trait CommonJS extends Common with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
 }
 
-object shared extends CrossPlatform {
+object shared extends CrossPlatform  {
   trait Shared extends CrossPlatformScalaModule with Common with Smithy4sModule with CommonBuildSettings {
     def smithy4sInputDir = T.source { millSourcePath / os.up / "smithy" }
     def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
@@ -115,7 +116,7 @@ object shared extends CrossPlatform {
   object js extends Shared with CommonJS
 }
 
-object backend extends Common { // with ScalafixModule
+object backend extends Common with DotEnvModule  { // with ScalafixModule
   def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
@@ -170,14 +171,15 @@ object frontend extends CommonJS {
   def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
 
-  def publicDev = T {
+  def dev = T {
     public(fastLinkJS)()
   }
   def publicProd = T {
     public(fullLinkJS)()
   }
   def moduleDeps = Seq(
-    shared.js
+    shared.js,
+    scalablyTyped.stModule
   ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)
 
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
