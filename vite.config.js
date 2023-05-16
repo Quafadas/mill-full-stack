@@ -36,7 +36,7 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: alias,
+    alias: alias
   },
 });
 

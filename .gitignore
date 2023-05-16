@@ -12,3 +12,4 @@ mill.bat
 .ammonite
 .bsp
 .env
+frontend_ts

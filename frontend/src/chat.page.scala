@@ -23,20 +23,35 @@ import org.scalablytyped.runtime.StringDictionary
 import typings.langchain.distToolsJsonMod.JsonSpec
 import typings.langchain.agentsMod.JsonToolkit
 import typings.jsYaml.mod.load
+import scala.scalajs.js.annotation.JSImport
+import typings.langchain.distAgentsExecutorMod.AgentExecutor
+import typings.langchain.distSchemaMod.ChainValues
+
 //import typings.langchain.agentsMod
+  import scala.scalajs.js
+  import scala.scalajs.js.annotation.JSGlobal
+@js.native
+@JSImport("../../ts/compile.dest/openApiTool.js", "openApiTool")
+object OpenApiTool extends js.Object {
+  def apply(openApiKey: String, toolAccessKey: String, openApiSpecRaw: String): AgentExecutor = js.native  
+}
+
+@js.native
+@JSImport("../../ts/compile.dest/openApiTool.js", "openAIApiKey")
+object OpenApiKey extends js.Object {
+  def apply(): String = js.native  
+}
 
 object ChatPage {
 
-  // private val at            = "at_something"
-  private val currentText = Var("tell me about insurance linked securities at schroders in 10 words")
+  private val currentText = Var("Understand how to make a POST request to openai /completions. Once understood, make the POST request with the prompt `tell me a joke`.")
   private val sdeSpec = Var[Option[String]](None)
   private val response = Var[Option[String]]("".some)
   private val loginError = Var[Option[Throwable]](None)
-  private val hasloginError = loginError.signal.map(_.isDefined)
-  private val jwt = Var[String]("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")
-  private val chat = jwt.signal.map(t => constructConversation(t, ChatModelProvider.Azure))  
+  private val hasloginError = loginError.signal.map(_.isDefined)  
+
   private val responseLoading = Var(false)
-  private val openApiSpec = FetchStream.get("https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml").toSignal("")
+  private val openApiSpec = FetchStream.get("https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml").toSignal("")  
 
   enum ChatModelProvider(val url: String):
     case OpenAI extends ChatModelProvider("https://dev.int.api.schroders.com/openai/v1")
@@ -61,23 +76,24 @@ object ChatPage {
   private def constructAgent(apiKey: String, cm: ChatModelProvider, spec: String)(using api: Api) =
     println("here")
     println(spec)
-    val chatConf = ConfigurationParameters()
-    chatConf.setApiKey(s"$apiKey")
-    //chatConf.setBasePath(cm.url)
+    OpenApiTool(apiKey, apiKey, spec)
+    // val chatConf = ConfigurationParameters()
+    // chatConf.setApiKey(s"$apiKey")
+    // //chatConf.setBasePath(cm.url)
 
-    val model = PartialOpenAIInputPartial()
-    model.setOpenAIApiKey(s"$apiKey")
-    model.setTemperature(0.0)
+    // val model = PartialOpenAIInputPartial()
+    // model.setOpenAIApiKey(s"$apiKey")
+    // model.setTemperature(0.0)
 
-    val baseModel = OpenAI(model, chatConf)
+    // val baseModel = OpenAI(model, chatConf)
 
-    val bah = load(spec).asInstanceOf[JsonObject]
+    // val bah = load(spec).asInstanceOf[JsonObject]
     //println(bah)
-    val toolkit = OpenApiToolkit(
-      JsonSpec(bah),
-      baseModel, 
-      StringDictionary("Content-Type" -> "application/json", "Authorization" -> apiKey)
-    )
+    // val toolkit = OpenApiToolkit(
+    //   JsonSpec(bah),
+    //   baseModel, 
+    //   StringDictionary("Content-Type" -> "application/json", "Authorization" -> apiKey)
+    // )
     //agentsMod.createOpenApiAgent(baseModel, toolkit)
 
   end constructAgent
@@ -97,14 +113,19 @@ object ChatPage {
     "token"
   )
 
+
+
+
   def render()(using api: Api, router: Router[Pages]): Div =
     println("rendering")
-    val apiAgent = jwt.signal.combineWith(openApiSpec)map((t, s) => constructAgent(t, ChatModelProvider.Azure, s))
+    lazy val apiKey = OpenApiKey()
+    //val apiAgent = jwt.signal.combineWith(openApiSpec)map((t, s) => constructAgent(t, ChatModelProvider.Azure, s))
+    val apiAgent = openApiSpec.map(s => OpenApiTool(apiKey, apiKey, s))
     val sendRequest = EventBus[Unit]()
     div(
       "Welcome to an experimewnt in langchain",
       //apiAgent --> sendRequest,
-      chat
+      apiAgent
         .combineWith(sendRequest.events.toWeakSignal)
         .changes
         .flatMap((c, o) =>
@@ -112,11 +133,15 @@ object ChatPage {
             case None => EventStream.fromValue("".some)
             case Some(_) =>
               println("make request")
+              val d = StringDictionary("input" -> currentText.now())
               response.set(None)
               responseLoading.set(true)
-              EventStream.fromJsPromise(c.call(currentText.now()).`then` { in =>
-                in.some
-              })
+              EventStream.fromJsPromise(
+                c.call(d)
+              .`then` { in =>
+                scalajs.js.JSON.stringify(in).some
+              }
+              )
         ) --> response,
       TextArea(
         _.value := currentText.now(),
@@ -135,10 +160,11 @@ object ChatPage {
       child.maybe <-- response.signal.map { s =>
         responseLoading.set(false)
         s.map(s1 =>
-          val asHtml = typings.marked.mod.marked.parse(s1)
-          foreignHtmlElement(
-            com.raquo.laminar.DomApi.unsafeParseHtmlString(s"<div>$asHtml</div>")
-          )
+          ujson.write(s1, indent = 4)
+          // val asHtml = typings.marked.mod.marked.parse(s1)
+          // foreignHtmlElement(
+          //   com.raquo.laminar.DomApi.unsafeParseHtmlString(s"<div>$asHtml</div>")
+          // )
         )
       }
     )

@@ -23,7 +23,7 @@ import mill.scalajslib._
 import mill.scalajslib.api._
 
 import mill.dotenv._
-
+import os.{GlobSyntax, /}
 import smithy4s.codegen.mill._
 
 // Allows mill to resolve the "meta-build" behind a corporate proxy
@@ -116,6 +116,48 @@ object shared extends CrossPlatform  {
   object js extends Shared with CommonJS
 }
 
+case class TSCompileOutput(
+  outPath: os.Path,
+  hash: String
+)
+object TSCompileOutput {
+  implicit val rw: upickle.default.ReadWriter[TSCompileOutput] = upickle.default.macroRW
+}
+
+object ts extends Module {
+
+  def sources = T.source(millSourcePath / "src")
+
+  def allSources = T { os.walk(sources().path).map(PathRef(_)) }
+
+  def configFile = T.source(millSourcePath / "tsconfig.json")
+
+  def bustCacheOnChange = T{false}
+
+  def compile = T{
+    val outp = T.ctx.dest
+    allSources() // This forces mill to trigger the task if the sources files change (I think)
+    //allSources()
+    //val cmd = s"tsc --project ${configFile().path} --module es6 --outDir $outp --rootDir ${sources().path}"
+    // println("compiling ts_slave")
+    // println(outp)
+    // println(sources().path)
+    //println(T.ctx)
+    //println(cmd)
+    //println(T.args)
+    //println(T.args.last.asInstanceOf[PathRef].sig)
+    val h = s"mill_hash_${T.task().hashCode()}." // For cache bursting
+    os.proc("tsc", "--project", configFile().path, "--module", "es2020", "--outDir", outp ).call(stdout = os.Inherit, cwd = T.dest)
+
+    if (bustCacheOnChange()) {
+      os.walk(outp).collect(os.move.matching{case p/g"$x.js" => p/g"$x.${h}js"})
+    }
+    //h // use this in vite, to reconstruct paths we can rely on in scalaJS
+    TSCompileOutput(outp, h)
+  }
+
+}
+
 object backend extends Common with DotEnvModule  { // with ScalafixModule
   def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def ivyDeps =
@@ -172,10 +214,10 @@ object frontend extends CommonJS {
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
 
   def dev = T {
-    public(fastLinkJS)()
+    public(fastLinkJS, ts.compile )()
   }
   def publicProd = T {
-    public(fullLinkJS)()
+    public(fullLinkJS, ts.compile)()
   }
   def moduleDeps = Seq(
     shared.js,
@@ -185,8 +227,12 @@ object frontend extends CommonJS {
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
 }
 
-private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
+private def public(jsTask: Task[Report], tsCompile: Task[TSCompileOutput] ): Task[Map[String, os.Path]] = T.task {
   val jsDir = jsTask().dest.path
-  // println(s"jsDir: $jsDir")
-  Map("@public" -> jsDir)
-}
+  tsCompile()
+
+  Map(
+    "@public" -> jsDir
+  )
+} 
+
