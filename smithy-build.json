@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "projections": {
+      "source": {
+          "plugins": {
+              "typescript-codegen": {
+                  "service": "hello#TodoService",
+                  "package": "@hello/todo",
+                  "packageVersion": "0.0.1"
+              }
+          }
+      }
+  },  
+  "maven": {
+      "dependencies": [
+          "software.amazon.smithy:smithy-model:1.30.0",
+          "software.amazon.smithy:smithy-aws-traits:1.31.0",
+          "software.amazon.smithy.typescript:smithy-typescript-codegen:0.15.0",
+          "com.disneystreaming.alloy:alloy-core:0.1.21"          
+      ]
+  }
+}

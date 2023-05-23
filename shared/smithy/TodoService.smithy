@@ -1,6 +1,12 @@
+$version: "2"
+
 namespace hello
 
 use alloy#simpleRestJson
+
+use aws.protocols#restJson1
+
+
 
 @trait
 structure metadata {
@@ -11,7 +17,9 @@ structure metadata {
 @metadata(description: "This is my own integer shape")
 string TodoId
 
+
 @simpleRestJson
+@restJson1
 service TodoService {
   version: "1.0.0",
   operations: [GetTodo, GetTodos, UpdateTodo, CreateTodo, DeleteTodo]

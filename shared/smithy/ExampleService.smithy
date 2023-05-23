@@ -1,3 +1,5 @@
+$version: "2"
+
 namespace hello
 
 use alloy#simpleRestJson
