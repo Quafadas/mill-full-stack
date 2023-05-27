@@ -13,11 +13,20 @@
   },  
   "maven": {
       "dependencies": [
-          "software.amazon.smithy:smithy-model:1.30.0",
+          "software.amazon.smithy:smithy-cli:1.31.0",
+          "software.amazon.smithy:smithy-model:1.31.0",
           "software.amazon.smithy:smithy-aws-traits:1.31.0",
+          "software.amazon.smithy:smithy-openapi:1.31.0",          
           "software.amazon.smithy.typescript:smithy-typescript-codegen:0.15.0",
-          "com.disneystreaming.alloy:alloy-core:0.1.21",
-          "software.amazon.smithy:smithy-aws-protocol-tests:1.31.0"
+          "com.disneystreaming.alloy:alloy-core:0.1.21"          
       ]
-  }
+  },
+  "repositories": [
+    {
+      "url": "https://repo.maven.apache.org/maven2/"
+    },
+    {
+      "url": "file://~/.m2/repository"
+    }
+  ]
 }
