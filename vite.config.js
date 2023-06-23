@@ -1,14 +1,11 @@
 import { spawnSync } from "child_process";
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
 import { defineConfig } from "vite";
 
 const alias = isDev()
   ? runMillCommand("frontend.dev")
   : runMillCommand("frontend.publicProd");
 
-export default defineConfig({
-  plugins: [wasm(), topLevelAwait()],
+export default defineConfig({  
   root: "frontend/ui",
   server: {
     open : "ui/chat",

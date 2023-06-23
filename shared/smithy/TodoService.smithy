@@ -4,9 +4,6 @@ namespace hello
 
 use alloy#simpleRestJson
 
-use aws.protocols#restJson1
-
-
 
 @trait
 structure metadata {
@@ -19,7 +16,6 @@ string TodoId
 
 
 @simpleRestJson
-@restJson1
 service TodoService {
   version: "1.0.0",
   operations: [GetTodo, GetTodos, UpdateTodo, CreateTodo, DeleteTodo]
