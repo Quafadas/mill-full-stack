@@ -8,7 +8,7 @@ const alias = isDev()
 export default defineConfig({  
   root: "frontend/ui",
   server: {
-    open : "ui/chat",
+    open : "ui",
     proxy: {
       "/api": {
         target: "http://0.0.0.0:8080/",

@@ -6,11 +6,11 @@ import scala.scalajs.js.JSConverters.*
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
-import io.laminext.syntax.core._
+import io.laminext.syntax.core.*
 import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
-import io.circe.syntax._
+import io.circe.syntax.*
 import viz.dsl.Conversion.u
 import org.scalajs.dom
 import viz.vega.plots.BarChart
@@ -18,10 +18,10 @@ import org.scalajs.dom.html.Div
 import java.util.UUID
 import scala.scalajs.js.annotation.JSExportTopLevel
 
-import smithy4s.http4s._
-import org.scalajs.dom._
+import smithy4s.http4s.*
+import org.scalajs.dom.*
 import org.http4s.dom.FetchClientBuilder
-import cats.effect._
+import cats.effect.*
 import hello.HelloWorldService
 import hello.GreetOutput
 import cats.effect.unsafe.implicits.global
@@ -42,25 +42,24 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import hello.Todos
 import javax.print.attribute.standard.DialogTypeSelection
+import typings.marked.markedStrings.del
 
+object HomePage:
 
-
-object HomePage {
-
-  val todoList = Var[List[Todo]](List()) 
+  val todoList = Var[List[Todo]](List())
   val removeTodoBus = EventBus[String]()
   val removeTodo = removeTodoBus.events.map(id => todoList.update(curr => curr.filter(_.id.value != id)))
 
   lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
 
-  def render()(using api: Api, router: Router[Pages]) =    
+  def render()(using api: Api, router: Router[Pages]) =
     div(
       errorBus --> Observer[Throwable] { err =>
         scribe.error(err)
       },
       Dialog(
         inContext(el => errorBus.events.mapTo(()) --> Observer[Unit](_ => el.ref.show())),
-        _.state := ValueState.Error ,
+        _.state := ValueState.Error,
         "An error has occured, it has been recorded in the console log. Your interactions with this page may have been lost. Please refresh the page (press f5). If this error persists, fetch help... "
       ),
       cls := "page-container",
@@ -77,7 +76,9 @@ object HomePage {
         div(
           cls := "inner-home-container",
           p(
-            span("An example of a todo app. The list below is unordered by fabulousness."),
+            span(
+              "An example of a todo app built on wonderful scala libraries. The list below is unordered by fabulousness."
+            ),
             ul(
               li(
                 Link("Laminar", _.href := "https://laminar.dev")
@@ -116,7 +117,8 @@ object HomePage {
             th(""),
             th(
               span(
-                linkIcon(IconName.add, addAction)
+                linkIcon(IconName.add),
+                onClick.mapToUnit --> addAction
               )
             )
           )
@@ -128,6 +130,7 @@ object HomePage {
   def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo])(using api: Api) =
     val isEditing = Var(false)
     val editedValue = Var[String]("")
+    val clickObserver = Observer[dom.MouseEvent](onNext = ev => dom.console.log(ev.screenX))
 
     tr(
       td(
@@ -144,18 +147,40 @@ object HomePage {
       ),
       td(
         cls := "centered",
-        CheckBox(
-          _.checked <-- todoS.map(_.complete)
+        child <-- todoS.map(t =>
+          val d = t.description
+          CheckBox(
+            _.checked := t.complete,
+            _.events.onChange.mapToChecked --> Observer[Boolean] { checked =>
+              api.stream(
+                _.todo
+                  .updateTodo(
+                    TodoId(id),
+                    checked,
+                    d
+                  )
+                  .map(updated => updateTodo(updated))
+              )
+            }
+          )
         )
       ),
       td(
         th(
           isEditing.signal.childWhenTrue(
             div(
+              onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
+                api.stream(
+                  _.todo.updateTodo(
+                    TodoId(id),
+                    false,
+                    editedValue.some
+                  ).map(updated => updateTodo(updated))
+                )
+              },
               linkIcon(
                 IconName.save
               )
-              // onClick --> saveNew value
             )
           ),
           isEditing.signal.childWhenFalse(
@@ -164,7 +189,6 @@ object HomePage {
             )
           ),
           onClick --> isEditing.updater((cur, _) => !cur)
-          // child.text <-- isEditing
         )
       ),
       td(
@@ -180,21 +204,28 @@ object HomePage {
         )
       )
     )
+  end renderTodo
 
   def deleteAction(using api: Api) =
     Observer[String] { s =>
-      api.stream(_.todo.deleteTodo(s))
+      api.stream(_.todo.deleteTodo(s).map(del => todoListRemove(del.id)))
     }
 
   def addAction(using api: Api) =
     Observer[Unit] { s =>
-      api.stream(_.todo.createTodo(false, None))
+      api.stream(_.todo.createTodo(false, None).map(tnew => todoListAdd(tnew)))
     }
 
   def todoListRemove(id: TodoId) =
     todoList.update(currentList => currentList.filter(_.id != id))
+  end todoListRemove
+
+  def updateTodo(t: Todo) =
+    todoList.update(currentList => currentList.map(tcur => if (tcur.id == t.id) t else tcur))
+  end updateTodo
 
   def todoListAdd(newTodo: Todo) =
     todoList.update(currentList => currentList :+ newTodo)
-}
+  end todoListAdd
 
+end HomePage
