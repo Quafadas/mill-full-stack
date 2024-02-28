@@ -189,7 +189,7 @@ private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
 } 
 
 def millw() = T.command {
-  val target = mill.modules.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
+  val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
   val millw = build.millSourcePath / "millw"
   os.copy.over(target.path, millw)
   os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
