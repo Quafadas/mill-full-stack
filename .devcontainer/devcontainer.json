@@ -18,14 +18,17 @@
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"version":21
+		},
+		"ghcr.io/devcontainers/features/node:1":{			
 		}
-	}
+
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
+	"postCreateCommand": "yarn install & ./millw -v",
 
 	// Configure tool-specific properties.
 	// "customizations": {},
