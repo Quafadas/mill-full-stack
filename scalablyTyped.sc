@@ -1,10 +1,10 @@
 import mill._, mill.scalalib._, mill.scalajslib._
-import $ivy.`com.github.lolgab::mill-scalablytyped::0.1.5`
+import $ivy.`com.github.lolgab::mill-scalablytyped::0.1.12`
 import com.github.lolgab.mill.scalablytyped._
 
 object Versions{
-  val scalaVersion = "3.2.2"
-  val scalaJSVersion = "1.13.1"
+  val scalaVersion = "3.4.0"
+  val scalaJSVersion = "1.15.0"
 }
 
 
