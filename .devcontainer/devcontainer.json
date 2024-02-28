@@ -28,7 +28,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn install & ./millw -v",
+	"postCreateCommand": "yarn install & ./millw -v"
 
 	// Configure tool-specific properties.
 	// "customizations": {},

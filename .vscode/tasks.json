@@ -20,7 +20,7 @@
         {
             "label": "backend",
             "type": "shell",
-            "command": "./mill -w backend.runBackground",
+            "command": "./millw -w -j 0 backend.runBackground",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"
@@ -30,7 +30,7 @@
         {
             "label": "frontend",
             "type": "shell",
-            "command": "./mill -w frontend.dev",
+            "command": "./millw -w -j 0 frontend.dev",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"
