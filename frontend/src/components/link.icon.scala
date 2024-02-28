@@ -1,6 +1,5 @@
 package frontend
 
-import io.laminext.syntax.core._
 import com.raquo.laminar.api.L.{*, given}
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*

@@ -71,7 +71,7 @@ object Config {
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
     ivy"org.http4s::http4s-dom::0.2.11",
     ivy"org.http4s::http4s-client::${http4sVersion}",
-    ivy"io.laminext::core::0.16.2"
+    // ivy"io.laminext::core::0.16.2"
   )
 }
 

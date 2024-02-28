@@ -6,7 +6,6 @@ import scala.scalajs.js.JSConverters.*
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
-import io.laminext.syntax.core.*
 import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
@@ -166,28 +165,28 @@ object HomePage:
       ),
       td(
         th(
-          isEditing.signal.childWhenTrue(
-            div(
-              onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
-                api.stream(
-                  _.todo.updateTodo(
-                    TodoId(id),
-                    false,
-                    editedValue.some
-                  ).map(updated => updateTodo(updated))
-                )
-              },
-              linkIcon(
-                IconName.save
-              )
-            )
-          ),
-          isEditing.signal.childWhenFalse(
-            linkIcon(
-              IconName.edit
-            )
-          ),
-          onClick --> isEditing.updater((cur, _) => !cur)
+        //   isEditing.signal.childWhenTrue(
+        //     div(
+        //       onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
+        //         api.stream(
+        //           _.todo.updateTodo(
+        //             TodoId(id),
+        //             false,
+        //             editedValue.some
+        //           ).map(updated => updateTodo(updated))
+        //         )
+        //       },
+        //       linkIcon(
+        //         IconName.save
+        //       )
+        //     )
+        //   ),
+        //   isEditing.signal.childWhenFalse(
+        //     linkIcon(
+        //       IconName.edit
+        //     )
+        //   ),
+        //   onClick --> isEditing.updater((cur, _) => !cur)
         )
       ),
       td(

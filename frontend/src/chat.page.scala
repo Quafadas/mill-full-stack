@@ -6,7 +6,6 @@ import scala.scalajs.js.JSConverters.*
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
-import io.laminext.syntax.core._
 import cats.syntax.option.*
 
 import com.raquo.waypoint.Router
