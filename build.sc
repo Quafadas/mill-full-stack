@@ -30,14 +30,14 @@ import smithy4s.codegen.mill._
 object Config {
   def scalaVersion = scalablyTyped.Versions.scalaVersion
   def scalaJSVersion = scalablyTyped.Versions.scalaJSVersion
-  def laminarVersion = "16.0.0"
+  def laminarVersion = "17.0.0-M6"
   def circeVersion = "0.14.6"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
   val http4sVersion = "0.23.25"
   val scribeVersion = "3.13.0"
 
   def sharedDependencies = Agg(
-    ivy"io.github.quafadas::dedav4s::0.8.2",
+    ivy"io.github.quafadas::dedav4s::0.9.0-RC9",
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",

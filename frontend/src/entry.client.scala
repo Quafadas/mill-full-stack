@@ -11,7 +11,6 @@ import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
 import io.circe.syntax._
-import viz.dsl.Conversion.u
 import org.scalajs.dom
 import viz.vega.plots.BarChart
 import org.scalajs.dom.html.Div

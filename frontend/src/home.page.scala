@@ -11,7 +11,6 @@ import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
 import io.circe.syntax.*
-import viz.dsl.Conversion.u
 import org.scalajs.dom
 import viz.vega.plots.BarChart
 import org.scalajs.dom.html.Div
@@ -67,12 +66,12 @@ object HomePage:
       Page(
         width := "100vw",
         height := "100vh",
-        _.slots.header := Bar(
-          _.design := BarDesign.Header,
-          // _.slots.startContent := Button(_.tooltip := "Go Home", _.icon := IconName.home),
-          // _.slots.endContent := Button(_.tooltip := "Settings", _.icon := IconName.`action-settings`),
-          Title(_.level := TitleLevel.H1, "To Do App")
-        ),
+        // _.slots.header := Bar(
+        //   // _.design := BarDesign.Header,
+        //   // _.slots.startContent := Button(_.tooltip := "Go Home", _.icon := IconName.home),
+        //   // _.slots.endContent := Button(_.tooltip := "Settings", _.icon := IconName.`action-settings`),
+        //   "To Do App"
+        // ),
         div(
           cls := "inner-home-container",
           p(

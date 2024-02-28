@@ -15,12 +15,15 @@ import org.http4s.Uri
 import org.http4s.dom.FetchClientBuilder
 import hello.TodoClient
 
-sealed trait Pages {}
-implicit val rw: ReadWriter[Pages] = macroRW
+sealed trait Pages
+given rw: ReadWriter[Pages] = macroRW
 
 object Pages:
   case object Home extends Pages
   case object Chat extends Pages
+
+  given home: ReadWriter[Home.type] = macroRW
+  given chat: ReadWriter[Chat.type] = macroRW
 
   val uiPath: PathSegment[Unit, DummyError] = root / "ui"
 
@@ -40,8 +43,8 @@ object Pages:
       chatRoute
     ),
     getPageTitle = _.toString,
-    serializePage = page => write(page)(rw),
-    deserializePage = pageStr => read(pageStr)(rw)
+    serializePage = page => write(page)(using rw),
+    deserializePage = pageStr => read(pageStr)(using rw)
   )(
     popStateEvents = L.windowEvents(_.onPopState), // this is how Waypoint avoids an explicit dependency on Laminar
     owner = L.unsafeWindowOwner // this router will live as long as the window
