@@ -28,7 +28,7 @@ import smithy4s.codegen.mill._
 // }
 
 object Config {
-  def scalaVersion = "3.3.3"
+  def scalaVersion = "3.4.0"
   def scalaJSVersion = "1.15.0"
   def laminarVersion = "17.0.0-M6"
   def circeVersion = "0.14.6"
@@ -90,8 +90,6 @@ trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
   def scalaVersion = Config.scalaVersion
 
   def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
-
-  def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 }
 trait CommonJS extends Common with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
@@ -112,7 +110,7 @@ object shared extends CrossPlatform {
   object js extends Shared with CommonJS
 }
 
-object backend extends Common with ScalafmtModule { // with ScalafixModule
+object backend extends Common with ScalafmtModule with ScalafixModule { // with ScalafixModule
   def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies

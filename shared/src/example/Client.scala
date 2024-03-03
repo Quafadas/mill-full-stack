@@ -44,6 +44,6 @@ object TodoClient:
       .apply(TodoService)
       .client(http4sClient)
       .uri(Uri.unsafeFromString("/"))
-      .use
+      .make
       .fold(throw _, identity)
 end TodoClient
