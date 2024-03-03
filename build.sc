@@ -1,4 +1,3 @@
-import $file.scalablyTyped
 import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.10`
 import $ivy.`com.goyeau::mill-scalafix::0.3.2`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
@@ -16,6 +15,7 @@ import mill.modules.Assembly._
 import mill.define.Target
 import mill.define.Task
 import mill.scalalib._
+import mill.scalalib.scalafmt._
 import mill.scalajslib._
 import mill.scalajslib.api._
 
@@ -28,8 +28,8 @@ import smithy4s.codegen.mill._
 // }
 
 object Config {
-  def scalaVersion = scalablyTyped.Versions.scalaVersion
-  def scalaJSVersion = scalablyTyped.Versions.scalaJSVersion
+  def scalaVersion = "3.3.3"
+  def scalaJSVersion = "1.15.0"
   def laminarVersion = "17.0.0-M6"
   def circeVersion = "0.14.6"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
@@ -41,7 +41,7 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
-    ivy"com.outr::scribe-cats::$scribeVersion",    
+    ivy"com.outr::scribe-cats::$scribeVersion",
     //ivy"com.lihaoyi::upickle::3.1.0"
   ) ++ Agg(
     "io.circe::circe-core:",
@@ -97,8 +97,8 @@ trait CommonJS extends Common with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
 }
 
-object shared extends CrossPlatform  {
-  trait Shared extends CrossPlatformScalaModule with Common with Smithy4sModule with CommonBuildSettings {
+object shared extends CrossPlatform {
+  trait Shared extends CrossPlatformScalaModule with Common with Smithy4sModule with CommonBuildSettings  with ScalafmtModule {
     def smithy4sInputDir = T.source { millSourcePath / os.up / "smithy" }
     def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
   }
@@ -112,7 +112,7 @@ object shared extends CrossPlatform  {
   object js extends Shared with CommonJS
 }
 
-object backend extends Common { // with ScalafixModule
+object backend extends Common with ScalafmtModule { // with ScalafixModule
   def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
@@ -151,18 +151,9 @@ object backend extends Common { // with ScalafixModule
     println(assets)
     assets.map(x => Rule.Append(x.toString))
   }
-
-  // object test extends Tests with TestModule.Munit with DotEnvModule with CommonBuildSettings{
-  //   def ivyDeps = Agg(
-  //     ivy"org.scalameta::munit::1.0.0-M6",
-  //     ivy"org.typelevel::munit-cats-effect::2.0.0-M3"
-  //   )
-
-  //   override def dotenvSources = T.sources { os.pwd / ".env-test" }
-  // }
 }
 
-object frontend extends CommonJS {
+object frontend extends CommonJS with ScalafmtModule  {
   // def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
@@ -175,7 +166,6 @@ object frontend extends CommonJS {
   }
   def moduleDeps = Seq(
     shared.js,
-    scalablyTyped.stModule
   ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)
 
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
@@ -186,7 +176,7 @@ private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
   Map(
     "@public" -> jsDir
   )
-} 
+}
 
 def millw() = T.command {
   val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")

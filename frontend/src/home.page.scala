@@ -40,7 +40,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import hello.Todos
 import javax.print.attribute.standard.DialogTypeSelection
-import typings.marked.markedStrings.del
+
 
 object HomePage:
 
