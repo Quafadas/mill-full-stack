@@ -19,7 +19,7 @@
 		"ghcr.io/devcontainers/features/java:1": {
 			"version":21
 		},
-		"ghcr.io/devcontainers/features/node:1":{			
+		"ghcr.io/devcontainers/features/node:1":{
 		}
 
 	},
@@ -28,7 +28,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn install & ./millw -v"
+	"postCreateCommand": "yarn install & ./millw -v && ./millw __.prepareOffline"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
