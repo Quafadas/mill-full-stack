@@ -41,7 +41,6 @@ import scala.concurrent.duration.FiniteDuration
 import hello.Todos
 import javax.print.attribute.standard.DialogTypeSelection
 
-
 object HomePage:
 
   val todoList = Var[List[Todo]](List())
@@ -165,28 +164,28 @@ object HomePage:
       ),
       td(
         th(
-        //   isEditing.signal.childWhenTrue(
-        //     div(
-        //       onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
-        //         api.stream(
-        //           _.todo.updateTodo(
-        //             TodoId(id),
-        //             false,
-        //             editedValue.some
-        //           ).map(updated => updateTodo(updated))
-        //         )
-        //       },
-        //       linkIcon(
-        //         IconName.save
-        //       )
-        //     )
-        //   ),
-        //   isEditing.signal.childWhenFalse(
-        //     linkIcon(
-        //       IconName.edit
-        //     )
-        //   ),
-        //   onClick --> isEditing.updater((cur, _) => !cur)
+          //   isEditing.signal.childWhenTrue(
+          //     div(
+          //       onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
+          //         api.stream(
+          //           _.todo.updateTodo(
+          //             TodoId(id),
+          //             false,
+          //             editedValue.some
+          //           ).map(updated => updateTodo(updated))
+          //         )
+          //       },
+          //       linkIcon(
+          //         IconName.save
+          //       )
+          //     )
+          //   ),
+          //   isEditing.signal.childWhenFalse(
+          //     linkIcon(
+          //       IconName.edit
+          //     )
+          //   ),
+          //   onClick --> isEditing.updater((cur, _) => !cur)
         )
       ),
       td(
@@ -219,7 +218,7 @@ object HomePage:
   end todoListRemove
 
   def updateTodo(t: Todo) =
-    todoList.update(currentList => currentList.map(tcur => if (tcur.id == t.id) t else tcur))
+    todoList.update(currentList => currentList.map(tcur => if tcur.id == t.id then t else tcur))
   end updateTodo
 
   def todoListAdd(newTodo: Todo) =

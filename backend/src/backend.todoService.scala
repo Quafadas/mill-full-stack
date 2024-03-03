@@ -47,20 +47,22 @@ object TodoImpl extends TodoService[IO]:
     scribe.info("update todo")
     val newT = Todo(id = id, complete = complete, description = description)
     todoDB.find(_.id == id) match
-      case Some(t) => 
+      case Some(t) =>
         todoDB -= t
         todoDB += newT
         IO.pure(newT)
       case None => throw new Exception(s"Todo with $id not found")
+    end match
   end updateTodo
 
   def deleteTodo(id: String): IO[TodoDeleted] =
     scribe.info(s"delete $id")
-    val toDel = todoDB.find(_.id.value == id)    
+    val toDel = todoDB.find(_.id.value == id)
     toDel match
       case Some(t) =>
         todoDB -= t
         IO.pure(TodoDeleted(id.todoId))
-      case None => throw new Exception(s"Todo with $id not found")    
+      case None => throw new Exception(s"Todo with $id not found")
+    end match
   end deleteTodo
 end TodoImpl

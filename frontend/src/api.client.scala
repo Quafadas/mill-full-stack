@@ -17,7 +17,7 @@ implicit val ec: ExecutionContextExecutor = scala.concurrent.ExecutionContext.gl
 
 class Api private (
     val todo: TodoService[IO]
-): 
+):
   def future[A](a: Api => IO[A]): Future[A] =
     a(this).unsafeToFuture()
 
@@ -33,7 +33,7 @@ object Api:
     val client = FetchClientBuilder[IO].create
 
     val todo = TodoClient.todoClient(client)
-    
+
     Api(todo)
   end create
 end Api

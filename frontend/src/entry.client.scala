@@ -9,17 +9,17 @@ import com.raquo.laminar.api.L.{*, given}
 import cats.syntax.option.*
 
 import io.circe.{Encoder, Decoder}
-import io.circe.syntax._
+import io.circe.syntax.*
 import org.scalajs.dom
 import viz.vega.plots.BarChart
 import org.scalajs.dom.html.Div
 import java.util.UUID
 import scala.scalajs.js.annotation.JSExportTopLevel
 
-import smithy4s.http4s._
-import org.scalajs.dom._
+import smithy4s.http4s.*
+import org.scalajs.dom.*
 import org.http4s.dom.FetchClientBuilder
-import cats.effect._
+import cats.effect.*
 import hello.HelloWorldService
 import hello.GreetOutput
 import cats.effect.unsafe.implicits.global
@@ -42,15 +42,14 @@ import com.raquo.laminar.nodes.ReactiveHtmlElement
 
 def io2Es[A](in: IO[A]): EventStream[A] = EventStream.fromFuture(in.unsafeToFuture())
 
-object Main {
+object Main:
 
   @JSExportTopLevel("main")
-  def main(): Unit = {
-    renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using Pages.router, Api.create() ))
-  }
+  def main(): Unit =
+    renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using Pages.router, Api.create()))
 
-  def app(using router: Router[Pages], api:Api): ReactiveHtmlElement[HTMLDivElement] =
+  def app(using router: Router[Pages], api: Api): ReactiveHtmlElement[HTMLDivElement] =
     div(
       child <-- Pages.renderPage
     )
-}
+end Main

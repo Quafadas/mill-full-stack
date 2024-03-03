@@ -1,7 +1,7 @@
 package frontend
 
 import com.raquo.waypoint.*
-import upickle.default._
+import upickle.default.*
 import com.raquo.laminar.api.L
 import com.raquo.laminar.api.L.*
 import urldsl.vocabulary.{Segment, Param, UrlMatching}
@@ -33,8 +33,8 @@ object Pages:
 
   def renderPage(using router: Router[Pages], api: Api): Signal[HtmlElement] =
     SplitRender[Pages, HtmlElement](router.currentPageSignal)
-      .collectStatic(Pages.Home)(HomePage.render() )
-      .collectStatic(Pages.Chat)(ChatPage.render() )
+      .collectStatic(Pages.Home)(HomePage.render())
+      .collectStatic(Pages.Chat)(ChatPage.render())
       .signal
 
   val router: Router[Pages] = new Router[Pages](
@@ -49,3 +49,4 @@ object Pages:
     popStateEvents = L.windowEvents(_.onPopState), // this is how Waypoint avoids an explicit dependency on Laminar
     owner = L.unsafeWindowOwner // this router will live as long as the window
   )
+end Pages
