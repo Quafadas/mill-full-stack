@@ -158,9 +158,9 @@ object frontend extends CommonJS with ScalafmtModule  {
 
   override def scalaJSImportMap = T {
     Seq(
-      ESModuleImportMapping.Prefix("@ui5/webcomponents", "https://cdn.skypack.dev/@ui5/webcomponents"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori", "https://cdn.skypack.dev/@ui5/webcomponents-fiori"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons", "https://cdn.skypack.dev/webcomponents-icons")
+      ESModuleImportMapping.Prefix("@ui5/webcomponents", "https://unpkg.com/@ui5/webcomponents"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori", "https://unpkg.com/@ui5/webcomponents-fiori"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons", "https://unpkg.com/@ui5/webcomponents-icons")
     )
   }
 
