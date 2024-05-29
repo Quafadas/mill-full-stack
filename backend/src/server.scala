@@ -48,6 +48,7 @@ object Main extends IOApp:
         println(" ---->> !!!! <<----")
         println("HEALTH RISK : This configuration bypasses CORS. You have been warned.")
         println(" ---->> !!!! <<----")
+        println("dev server at http://localhost:8080")
         // Probably we only really want to GZIP the bundle, rather than the API routes, but I don't really know how to do that,
         // so I'm just gzipping the whole thing.
         val corsBypass = GZip(

@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.10`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::dev-SNAPSHOT`
 import $ivy.`com.goyeau::mill-scalafix::0.3.2`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
 
@@ -29,7 +29,7 @@ import smithy4s.codegen.mill._
 
 object Config {
   def scalaVersion = "3.4.0"
-  def scalaJSVersion = "1.15.0"
+  def scalaJSVersion = "1.16.0"
   def laminarVersion = "17.0.0-M6"
   def circeVersion = "0.14.6"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
@@ -156,12 +156,20 @@ object frontend extends CommonJS with ScalafmtModule  {
   def moduleKind = ModuleKind.ESModule
   def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
 
-  def dev = T {
-    public(fastLinkJS)()
+  override def scalaJSImportMap = T {
+    Seq(
+      ESModuleImportMapping.Prefix("@ui5/webcomponents", "https://cdn.skypack.dev/@ui5/webcomponents"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori", "https://cdn.skypack.dev/@ui5/webcomponents-fiori"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons", "https://cdn.skypack.dev/webcomponents-icons")
+    )
   }
-  def publicProd = T {
-    public(fullLinkJS)()
-  }
+
+  // def dev = T {
+  //   public(fastLinkJS)()
+  // }
+  // def publicProd = T {
+  //   public(fullLinkJS)()
+  // }
   def moduleDeps = Seq(
     shared.js,
   ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)

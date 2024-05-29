@@ -25,7 +25,7 @@ object Pages:
   given home: ReadWriter[Home.type] = macroRW
   given chat: ReadWriter[Chat.type] = macroRW
 
-  val uiPath: PathSegment[Unit, DummyError] = root / "ui"
+  val uiPath: PathSegment[Unit, DummyError] = root
 
   val homeRoute: Route[Home.type, Unit] = Route.static(Pages.Home, uiPath / endOfSegments)
 

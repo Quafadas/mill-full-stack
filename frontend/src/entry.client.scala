@@ -46,10 +46,11 @@ object Main:
 
   @JSExportTopLevel("main")
   def main(): Unit =
-    renderOnDomContentLoaded(dom.document.querySelector("#app"), app(using Pages.router, Api.create()))
+    renderOnDomContentLoaded(dom.document.querySelector("app"), app(using Pages.router, Api.create()))
 
   def app(using router: Router[Pages], api: Api): ReactiveHtmlElement[HTMLDivElement] =
     div(
+      h1("Hello, World!"),
       child <-- Pages.renderPage
     )
 end Main
