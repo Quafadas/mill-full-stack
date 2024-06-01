@@ -12,6 +12,8 @@ import org.http4s.Uri
 import org.http4s.dom.FetchClientBuilder
 import hello.TodoClient
 import scala.concurrent.ExecutionContextExecutor
+import org.http4s.client.Client
+
 
 implicit val ec: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
@@ -32,7 +34,15 @@ object Api:
 
     val client = FetchClientBuilder[IO].create
 
-    val todo = TodoClient.todoClient(client)
+    val frontendClient = Client[IO] { req =>
+      val amendedUri = req.uri.copy(scheme = None, authority = None)
+      println(amendedUri)
+      val amendedRequest = req.withUri(amendedUri)
+      println(amendedRequest)
+      client.run(amendedRequest)
+    }
+
+    val todo = TodoClient.todoClient(frontendClient)
 
     Api(todo)
   end create

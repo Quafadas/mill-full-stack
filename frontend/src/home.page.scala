@@ -41,7 +41,7 @@ import scala.concurrent.duration.FiniteDuration
 import hello.Todos
 import javax.print.attribute.standard.DialogTypeSelection
 
-object HomePage:
+object HomePageRender:
 
   val todoList = Var[List[Todo]](List())
   val removeTodoBus = EventBus[String]()
@@ -49,8 +49,9 @@ object HomePage:
 
   lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
 
-  def render()(using api: Api, router: Router[Pages]) =
+  def render()(using api: Api) =
     div(
+      h1("To Do App"),
       errorBus --> Observer[Throwable] { err =>
         scribe.error(err)
       },
@@ -225,4 +226,4 @@ object HomePage:
     todoList.update(currentList => currentList :+ newTodo)
   end todoListAdd
 
-end HomePage
+end HomePageRender

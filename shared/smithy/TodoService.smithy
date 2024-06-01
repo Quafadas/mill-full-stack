@@ -1,6 +1,6 @@
 $version: "2"
 
-namespace hello
+namespace frontend
 
 use alloy#simpleRestJson
 
@@ -23,8 +23,8 @@ service TodoService {
 
 @readonly
 @http(method: "GET", uri: "/api/todo")
-operation GetTodos {   
-  output: Todos,  
+operation GetTodos {
+  output: Todos,
 }
 
 @readonly
@@ -35,22 +35,22 @@ operation GetTodo {
 }
 
 @http(method: "POST", uri: "/api/todo/{id}")
-operation UpdateTodo {    
-  input: Todo, 
+operation UpdateTodo {
+  input: Todo,
   output: Todo
 }
 
 @idempotent
 @http(method: "PUT", uri: "/api/todo")
-operation CreateTodo {    
-  input: NewTodo, 
+operation CreateTodo {
+  input: NewTodo,
   output: Todo
 }
 
 @idempotent
 @http(method: "DELETE", uri: "/api/todo/{id}")
-operation DeleteTodo {    
-  input: TodoInput, 
+operation DeleteTodo {
+  input: TodoInput,
   output: TodoDeleted
 }
 
@@ -78,7 +78,7 @@ structure Todo {
   @required
   id: TodoId,
   description: String,
-  @required  
+  @required
   complete: Boolean
 }
 
@@ -88,6 +88,6 @@ structure Todos {
 }
 
 
-list TodoList {  
+list TodoList {
   member: Todo
 }

@@ -14,39 +14,44 @@ import cats.effect.unsafe.implicits.global
 import org.http4s.Uri
 import org.http4s.dom.FetchClientBuilder
 import hello.TodoClient
+import org.scalajs.dom
+import org.scalajs.dom.document
 
-sealed trait Pages
-given rw: ReadWriter[Pages] = macroRW
 
-object Pages:
-  case object Home extends Pages
-  case object Chat extends Pages
+sealed trait Page derives ReadWriter
+case class UserPage(userId: Int) extends Page derives ReadWriter
+case object HomePage extends Page derives ReadWriter
 
-  given home: ReadWriter[Home.type] = macroRW
-  given chat: ReadWriter[Chat.type] = macroRW
+val userRoute = Route(
+  encode = (userPage: UserPage) => userPage.userId,
+  decode = arg => UserPage(userId = arg),
+  pattern = root / "app" / "user" / segment[Int] / endOfSegments
+)
 
-  val uiPath: PathSegment[Unit, DummyError] = root
+val homeRoute = Route.static(HomePage, root )
 
-  val homeRoute: Route[Home.type, Unit] = Route.static(Pages.Home, uiPath / endOfSegments)
+val router = new Router[Page](
+  routes = List(userRoute, homeRoute),
+  getPageTitle = _.toString, // mock page title (displayed in the browser tab next to favicon)
+  serializePage = page => write(page), // serialize page data for storage in History API log
+  deserializePage = pageStr => read(pageStr) // deserialize the above
+)(
+  popStateEvents = L.windowEvents(_.onPopState), // this is how Waypoint avoids an explicit dependency on Laminar
+  owner = L.unsafeWindowOwner // this router will live as long as the window
+)
 
-  val chatRoute: Route[Chat.type, Unit] = Route.static(Pages.Chat, uiPath / "chat" / endOfSegments)
+def splitter(using a: Api, r: Router[Page]) = SplitRender[Page, HtmlElement](router.currentPageSignal)
+  .collectSignal[UserPage] { userPageSignal => h1("user") }
+  .collectStatic(HomePage) { HomePageRender.render() }
 
-  def renderPage(using router: Router[Pages], api: Api): Signal[HtmlElement] =
-    SplitRender[Pages, HtmlElement](router.currentPageSignal)
-      .collectStatic(Pages.Home)(HomePage.render())
-      .collectStatic(Pages.Chat)(ChatPage.render())
-      .signal
 
-  val router: Router[Pages] = new Router[Pages](
-    routes = List(
-      homeRoute,
-      chatRoute
-    ),
-    getPageTitle = _.toString,
-    serializePage = page => write(page)(using rw),
-    deserializePage = pageStr => read(pageStr)(using rw)
-  )(
-    popStateEvents = L.windowEvents(_.onPopState), // this is how Waypoint avoids an explicit dependency on Laminar
-    owner = L.unsafeWindowOwner // this router will live as long as the window
+@main
+def main: Unit =
+  given a : Api = Api.create()
+  given r: Router[Page] = router
+  renderOnDomContentLoaded(
+    dom.document.getElementById("app"),
+    div(
+      child <-- splitter.signal
+    )
   )
-end Pages

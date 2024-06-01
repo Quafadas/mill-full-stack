@@ -1,6 +1,6 @@
 $version: "2"
 
-namespace hello
+namespace frontend
 
 use alloy#simpleRestJson
 
@@ -29,7 +29,7 @@ structure GreetInput {
   name:String
 }
 
-structure GreetOutput {  
+structure GreetOutput {
   message:String
 }
 

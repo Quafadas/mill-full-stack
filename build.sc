@@ -158,9 +158,9 @@ object frontend extends CommonJS with ScalafmtModule  {
 
   override def scalaJSImportMap = T {
     Seq(
-      ESModuleImportMapping.Prefix("@ui5/webcomponents", "https://unpkg.com/@ui5/webcomponents"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori", "https://unpkg.com/@ui5/webcomponents-fiori"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons", "https://unpkg.com/@ui5/webcomponents-icons")
+      ESModuleImportMapping.Prefix("@ui5/webcomponents/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-fiori/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-icons/")
     )
   }
 
@@ -182,12 +182,4 @@ private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
   Map(
     "@public" -> jsDir
   )
-}
-
-def millw() = T.command {
-  val target = mill.util.Util.download("https://raw.githubusercontent.com/lefou/millw/main/millw")
-  val millw = build.millSourcePath / "millw"
-  os.copy.over(target.path, millw)
-  os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
-  target
 }

@@ -9,8 +9,7 @@
             "dependsOrder": "parallel",
             "dependsOn": [
                 "backend",
-                "frontend",
-                "frontendDevServer"
+                "frontend"
             ],
             "problemMatcher": [],
             "group": {
@@ -20,17 +19,7 @@
         {
             "label": "backend",
             "type": "shell",
-            "command": "./millw -w -j 0 backend.runBackground",
-            "presentation": {
-                "panel": "dedicated",
-                "group": "runDevCmd"
-            },
-            "group": "build"            
-        },
-        {
-            "label": "frontend",
-            "type": "shell",
-            "command": "./millw -w -j 0 frontend.dev",
+            "command": "mill -j 0 backend.compile",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"
@@ -38,9 +27,9 @@
             "group": "build"
         },
         {
-            "label": "frontendDevServer",
+            "label": "frontend",
             "type": "shell",
-            "command": "npm run dev --open",
+            "command": "mill -j 0 frontend.fastLinkJS",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"

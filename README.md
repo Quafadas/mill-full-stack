@@ -1,6 +1,6 @@
 # mill-full-stack
 
-An experiment in full stack with mill, smithy, scala js and laminar... 
+An experiment in full stack with mill, smithy, scala js and laminar...
 
 # Development
 
@@ -12,7 +12,7 @@ Start 3 consoles
 2. ```./mill -w frontend.publicDev```
 3. ```npm run dev```
 
-These three things recompile and restart the backend on change, continuously recompile scala js on change, start vite which will continuously re-server the changed frontend and proxy api requests to the backend. 
+These three things recompile and restart the backend on change, continuously recompile scala js on change, start vite which will continuously re-server the changed frontend and proxy api requests to the backend.
 
 # Notable configuration
 
@@ -46,15 +46,18 @@ Events | EventStream[A] | EventBus[A] |
 State | Signal[A] | Var[A] |
 
 ## Smithy
-smithy4s can load smithy models from jars, so you can share smithy files across several codebases 
+smithy4s can load smithy models from jars, so you can share smithy files across several codebases
 https://github.com/disneystreaming/smithy4s/tree/main/modules/protocol/resources/META-INF/smithy
 https://github.com/disneystreaming/smithy4s/blob/main/modules/codegen-plugin/src/sbt-test/codegen-plugin/dependencies-only/build.sbt#L9
 
-# Getting started. 
-You may need to find your predefScript.sc file in $HOME/.mill/ammonite and add 
+# Getting started.
+You may need to find your predefScript.sc file in $HOME/.mill/ammonite and add
 ```
 interp.repositories() ++= Seq(
     coursierapi.MavenRepository.of("https://jitpack.io")
 )
 ```
 In order to resolve mill-dotenv which is hosted on jitpack
+
+Hints: for bvrowaser tools
+`await (await fetch('<URL>')).json()`
