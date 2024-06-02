@@ -20,25 +20,25 @@ import smithy4s.http4s.*
 import org.scalajs.dom.*
 import org.http4s.dom.FetchClientBuilder
 import cats.effect.*
-import hello.HelloWorldService
-import hello.GreetOutput
+import frontend.frontendWorldService
+import frontend.GreetOutput
 import cats.effect.unsafe.implicits.global
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import hello.TodoClient
-import hello.Clients
-import hello.TodoService
-import hello.Todo
+import frontend.TodoClient
+import frontend.Clients
+import frontend.TodoService
+import frontend.Todo
 
 import com.raquo.waypoint.Router
 import java.awt.Checkbox
 import be.doeraene.webcomponents.ui5.configkeys.IconName.strikethrough
-import hello.TodoId
+import frontend.TodoId
 import scala.concurrent.duration.Duration.apply
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
-import hello.Todos
+import frontend.Todos
 import javax.print.attribute.standard.DialogTypeSelection
 
 object HomePageRender:
@@ -163,30 +163,31 @@ object HomePageRender:
           )
         )
       ),
+
       td(
         th(
-          //   isEditing.signal.childWhenTrue(
-          //     div(
-          //       onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
-          //         api.stream(
-          //           _.todo.updateTodo(
-          //             TodoId(id),
-          //             false,
-          //             editedValue.some
-          //           ).map(updated => updateTodo(updated))
-          //         )
-          //       },
-          //       linkIcon(
-          //         IconName.save
-          //       )
-          //     )
-          //   ),
-          //   isEditing.signal.childWhenFalse(
-          //     linkIcon(
-          //       IconName.edit
-          //     )
-          //   ),
-          //   onClick --> isEditing.updater((cur, _) => !cur)
+            isEditing.signal.childWhenTrue(
+              div(
+                onClick.mapTo((id, editedValue.now())) --> Observer[(String, String)] { case (id, editedValue) =>
+                  api.stream(
+                    _.todo.updateTodo(
+                      TodoId(id),
+                      false,
+                      editedValue.some
+                    ).map(updated => updateTodo(updated))
+                  )
+                },
+                linkIcon(
+                  IconName.save
+                )
+              )
+            ),
+            isEditing.signal.childWhenFalse(
+              linkIcon(
+                IconName.edit
+              )
+            ),
+            onClick --> isEditing.updater((cur, _) => !cur)
         )
       ),
       td(

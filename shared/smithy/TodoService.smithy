@@ -1,6 +1,6 @@
 $version: "2"
 
-namespace frontend
+namespace shared
 
 use alloy#simpleRestJson
 

@@ -20,16 +20,10 @@ import smithy4s.http4s.*
 import org.scalajs.dom.*
 import org.http4s.dom.FetchClientBuilder
 import cats.effect.*
-import hello.HelloWorldService
-import hello.GreetOutput
 import cats.effect.unsafe.implicits.global
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import hello.TodoClient
-import hello.Clients
-import hello.TodoService
-import hello.Todo
 
 import com.raquo.waypoint.Router
 import java.awt.Checkbox
