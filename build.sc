@@ -1,5 +1,5 @@
 import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::dev-SNAPSHOT`
-import $ivy.`com.goyeau::mill-scalafix::0.3.2`
+import $ivy.`com.goyeau::mill-scalafix::0.4.0`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
 
 import $file.CustomZincWorkerModule
@@ -22,13 +22,8 @@ import mill.scalajslib.api._
 import os.{GlobSyntax, /}
 import smithy4s.codegen.mill._
 
-// Allows mill to resolve the "meta-build" behind a corporate proxy
-// object CustomZincWorkerModule extends ZincWorkerModule with CoursierModule {
-
-// }
-
 object Config {
-  def scalaVersion = "3.4.0"
+  def scalaVersion = "3.4.2"
   def scalaJSVersion = "1.16.0"
   def laminarVersion = "17.0.0-M6"
   def circeVersion = "0.14.6"
@@ -71,24 +66,21 @@ object Config {
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
     ivy"org.http4s::http4s-dom::0.2.11",
     ivy"org.http4s::http4s-client::${http4sVersion}",
-    // ivy"io.laminext::core::0.16.2"
+    ivy"io.laminext::core::0.17.0"
   )
 }
 
 trait CommonBuildSettings extends ScalaModule {
-  // def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
-  // def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
   def scalaVersion = Config.scalaVersion
+
+  override def scalacOptions: Target[Seq[String]] = super.scalacOptions() ++ Seq(
+    "-Wunused:all",
+  )
 }
 
 trait Common extends ScalaModule with CommonBuildSettings with ScalafixModule {
-  // def repositories = super.repositories ++ Seq(
-  //   MavenRepository("https://jitpack.io")
-  // )
-  // def zincWorker = CustomZincWorkerModule.CustomZincWorkerModule
 
   def scalaVersion = Config.scalaVersion
-
   def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
 }
 trait CommonJS extends Common with ScalaJSModule {
@@ -103,7 +95,7 @@ object shared extends CrossPlatform {
   object jvm extends Shared {
     object test extends CrossPlatformSources with ScalaTests with TestModule.Munit {
       def ivyDeps = Agg(
-        ivy"org.scalameta::munit::1.0.0-M11"
+        ivy"org.scalameta::munit::1.0.0"
       )
     }
   }

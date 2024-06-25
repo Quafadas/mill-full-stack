@@ -1,21 +1,12 @@
 package frontend
 
-import com.raquo.waypoint.*
-import upickle.default.*
 import com.raquo.laminar.api.L
-import com.raquo.laminar.api.L.*
-import urldsl.vocabulary.{Segment, Param, UrlMatching}
-import urldsl.language.PathSegment
-import urldsl.errors.DummyError
-import hello.TodoService
-import cats.effect.IO
-import scala.concurrent.Future
-import cats.effect.unsafe.implicits.global
-import org.http4s.Uri
-import org.http4s.dom.FetchClientBuilder
-import hello.TodoClient
+import com.raquo.laminar.api.L._
+import com.raquo.waypoint._
 import org.scalajs.dom
 import org.scalajs.dom.document
+import upickle.default._
+import urldsl.errors.DummyError
 
 
 sealed trait Page derives ReadWriter

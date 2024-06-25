@@ -1,8 +1,9 @@
 package hello
 
-import hello.*
 import cats.effect.IO
-import cats.syntax.all.*
+import cats.syntax.all._
+import shared._
+
 import scala.collection.mutable.ListBuffer
 
 object TodoImpl extends TodoService[IO]:

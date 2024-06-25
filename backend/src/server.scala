@@ -1,26 +1,21 @@
 package hello
 
-import cats.effect.*
-import org.http4s.*
-import org.http4s.dsl.io.*
-import org.http4s.ember.server.*
-import org.http4s.implicits.*
-import com.comcast.ip4s.*
-import smithy4s.http4s.swagger.docs
-import smithy4s.http4s.SimpleRestJsonBuilder
-import hello.{HelloWorldService, TodoService}
-import cats.implicits.*
-import org.http4s.server.middleware.*
-import org.http4s.server.staticcontent.*
-import java.io.File
-import org.http4s.server.Router
-import cask.model.Status.OK
-import org.http4s.Response
-import org.http4s.Status
-import scala.io.Source
-import org.http4s.Request
+import cats.effect._
+import cats.implicits._
+import com.comcast.ip4s._
 import org.http4s.HttpRoutes
-import fs2.compression.ZLibParams.Header.GZIP
+import org.http4s.Request
+import org.http4s.Response
+import org.http4s._
+import org.http4s.dsl.io._
+import org.http4s.ember.server._
+import org.http4s.implicits._
+import org.http4s.server.Router
+import org.http4s.server.middleware._
+import org.http4s.server.staticcontent._
+import shared._
+import smithy4s.http4s.SimpleRestJsonBuilder
+import smithy4s.http4s.swagger.docs
 
 object Main extends IOApp:
   // todo : https://github.com/http4s/http4s/issues/2977

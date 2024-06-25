@@ -60,4 +60,4 @@ interp.repositories() ++= Seq(
 In order to resolve mill-dotenv which is hosted on jitpack
 
 Hints: for bvrowaser tools
-`await (await fetch('<URL>')).json()`
+await (await fetch('/api/todo')).json()

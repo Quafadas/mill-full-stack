@@ -1,15 +1,11 @@
 package frontend
 
-import scala.scalajs.js
-import scala.scalajs.js.JSConverters.*
-
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
-import com.raquo.laminar.api.L.{*, given}
-import cats.syntax.option.*
-
+import be.doeraene.webcomponents.ui5._
+import cats.syntax.option._
+import com.raquo.laminar.api.L._
 import com.raquo.waypoint.Router
-import scala.scalajs.js.annotation.JSImport
+
+import scala.scalajs.js
 
 object ChatPage:
 
@@ -20,7 +16,7 @@ object ChatPage:
   private val loginError = Var[Option[Throwable]](None)
   private val hasloginError = loginError.signal.map(_.isDefined)
 
-  def render()(using api: Api, router: Router[Pages]): Div =
+  def render()(using api: Api, router: Router[Page]): Div =
     div(
     )
 

@@ -1,8 +1,8 @@
 package hello
 
-import hello.*
 import cats.effect.IO
-import cats.syntax.all.*
+import cats.syntax.all._
+import shared._
 
 object HelloWorldImpl extends HelloWorldService[IO]:
   def hello(name: String, town: Option[String]) = IO.pure {

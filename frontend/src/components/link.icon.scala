@@ -1,8 +1,8 @@
 package frontend
 
-import com.raquo.laminar.api.L.{*, given}
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
+import be.doeraene.webcomponents.ui5._
+import be.doeraene.webcomponents.ui5.configkeys._
+import com.raquo.laminar.api.L._
 
 def linkIcon(iconName: IconName) =
   Link(

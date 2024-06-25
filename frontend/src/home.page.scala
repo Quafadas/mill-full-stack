@@ -1,45 +1,18 @@
 package frontend
 
-import scala.scalajs.js
-import scala.scalajs.js.JSConverters.*
-
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
-import com.raquo.laminar.api.L.{*, given}
-import cats.syntax.option.*
-
-import io.circe.{Encoder, Decoder}
-import io.circe.syntax.*
+import be.doeraene.webcomponents.ui5._
+import be.doeraene.webcomponents.ui5.configkeys._
+import cats.effect._
+import cats.syntax.option._
+import com.raquo.laminar.api.L._
+import io.laminext.syntax.core._
 import org.scalajs.dom
-import viz.vega.plots.BarChart
-import org.scalajs.dom.html.Div
-import java.util.UUID
-import scala.scalajs.js.annotation.JSExportTopLevel
+import org.scalajs.dom._
+import shared._
 
-import smithy4s.http4s.*
-import org.scalajs.dom.*
-import org.http4s.dom.FetchClientBuilder
-import cats.effect.*
-import frontend.frontendWorldService
-import frontend.GreetOutput
-import cats.effect.unsafe.implicits.global
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import frontend.TodoClient
-import frontend.Clients
-import frontend.TodoService
-import frontend.Todo
-
-import com.raquo.waypoint.Router
-import java.awt.Checkbox
-import be.doeraene.webcomponents.ui5.configkeys.IconName.strikethrough
-import frontend.TodoId
-import scala.concurrent.duration.Duration.apply
 import scala.concurrent.duration.Duration
-import scala.concurrent.duration.FiniteDuration
-import frontend.Todos
-import javax.print.attribute.standard.DialogTypeSelection
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters._
 
 object HomePageRender:
 
