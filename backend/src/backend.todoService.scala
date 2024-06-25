@@ -2,6 +2,7 @@ package hello
 
 import cats.effect.IO
 import cats.syntax.all.*
+
 import shared.*
 
 import scala.collection.mutable.ListBuffer
@@ -14,7 +15,6 @@ object TodoImpl extends TodoService[IO]:
     "Check laminar docs",
     "Check sap ui5 scala docs",
     "Check less docs",
-    "Check vite.config.js for proxy config to backend",
     "check smithy4s docs",
     "check http4s docs",
     "check mill docs",
@@ -34,7 +34,6 @@ object TodoImpl extends TodoService[IO]:
   }
 
   def getTodos() =
-    scribe.cats[IO].info("here") >>
       IO.pure(Todos(todoDB.toList))
 
   def createTodo(complete: Boolean, description: Option[String]) =

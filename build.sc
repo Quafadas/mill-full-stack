@@ -18,6 +18,7 @@ import mill.scalalib._
 import mill.scalalib.scalafmt._
 import mill.scalajslib._
 import mill.scalajslib.api._
+import mill.scalanativelib._
 
 import os.{GlobSyntax, /}
 import smithy4s.codegen.mill._
@@ -32,7 +33,6 @@ object Config {
   val scribeVersion = "3.15.0"
 
   def sharedDependencies = Agg(
-    ivy"io.github.quafadas::dedav4s::0.9.0",
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
@@ -53,12 +53,13 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ivy"org.tpolecat::skunk-core:0.6.4",
     ivy"is.cir::ciris:3.6.0",
-    ivy"io.chrisdavenport::mules:0.7.0",
-    ivy"org.flywaydb:flyway-core:10.15.0",
-    ivy"org.postgresql:postgresql:42.7.3"
+    // ivy"io.chrisdavenport::mules:0.7.0",
+    // ivy"org.flywaydb:flyway-core:10.15.0",
+    // ivy"org.postgresql:postgresql:42.7.3"
   )
 
   def jsDependencies = Agg(
+    ivy"io.github.quafadas::dedav4s::0.9.0",
     ivy"""com.raquo::laminar::$laminarVersion""",
     ivy"""be.doeraene::web-components-ui5::1.21.2""",
     ivy"""com.raquo::waypoint::8.0.0""",
@@ -87,11 +88,19 @@ trait CommonJS extends Common with ScalaJSModule {
   def scalaJSVersion = Config.scalaJSVersion
 }
 
+trait CommonNative extends Common with ScalaNativeModule {
+  def scalaNativeVersion = "0.4.0"
+}
+
 object shared extends CrossPlatform {
   trait Shared extends CrossPlatformScalaModule with Common with Smithy4sModule with CommonBuildSettings  with ScalafmtModule {
     def smithy4sInputDir = T.source { millSourcePath / os.up / "smithy" }
     def ivyDeps = super.ivyDeps() ++ Config.sharedDependencies
   }
+
+  // object native extends Shared with CommonNative {
+
+  // }
   object jvm extends Shared {
     object test extends CrossPlatformSources with ScalaTests with TestModule.Munit {
       def ivyDeps = Agg(

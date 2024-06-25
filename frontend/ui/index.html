@@ -3,10 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet/less" type="text/css" href="index.less" />
     <title>Scala 3 full stack</title>
   </head>
   <body>
     <div id="app"></div>
+
+    <!--
+    SAP's best practise clearly recommends a bundler. Doing this out of a CDN is definitely "at your own risk".
+
+    Other frameworks like Shoelace appear more accomodating in this regard.
+
+    https://community.sap.com/t5/technology-blogs-by-sap/getting-started-with-ui5-web-components-in-2021/ba-p/13514144
+
+-->
+
     <script type="importmap">
       {
         "imports": {
@@ -24,8 +35,22 @@
       }
     </script>
     <script type="module" src="/main.js"></script>
+
     <script>
-      const sse = new EventSource("/api/v1/sse");
+      less = {
+        env: "development",
+        async: true,
+        fileAsync: true,
+        dumpLineNumbers: "comments",
+        relativeUrls: false,
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/less"></script>
+    <script>
+      less.watch();
+    </script>
+    <script>
+      const sse = new EventSource("/refresh/v1/sse");
       sse.addEventListener("message", (e) => {
         const msg = JSON.parse(e.data);
 

@@ -2,24 +2,28 @@ package frontend
 
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
+
 import cats.syntax.option.*
+
 import com.raquo.laminar.api.L.*
+
 import io.laminext.syntax.core.*
+
 import org.scalajs.dom
 import org.scalajs.dom.*
+
 import shared.*
 
 object HomePageRender:
 
-  val todoList = Var[List[Todo]](List())
-  val removeTodoBus = EventBus[String]()
-  val removeTodo = removeTodoBus.events.map(id => todoList.update(curr => curr.filter(_.id.value != id)))
+  private val todoList = Var[List[Todo]](List())
+  private val removeTodoBus = EventBus[String]()
+  private val removeTodo = removeTodoBus.events.map(id => todoList.update(curr => curr.filter(_.id.value != id)))
 
-  lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
+  private lazy val errorBus: EventBus[Throwable] = new EventBus[Throwable]
 
-  def render()(using api: Api) =
+  def render()(using api: Api) : Div =
     div(
-      h1("To Do App"),
       errorBus --> Observer[Throwable] { err =>
         scribe.error(err)
       },
@@ -33,17 +37,18 @@ object HomePageRender:
       Page(
         width := "100vw",
         height := "100vh",
-        // _.slots.header := Bar(
-        //   // _.design := BarDesign.Header,
-        //   // _.slots.startContent := Button(_.tooltip := "Go Home", _.icon := IconName.home),
-        //   // _.slots.endContent := Button(_.tooltip := "Settings", _.icon := IconName.`action-settings`),
-        //   "To Do App"
-        // ),
+        _.slots.header := Bar(
+          _.design := BarDesign.Header,
+          _.slots.startContent := Button(_.tooltip := "Go Home", _.icon := IconName.home),
+          _.slots.endContent := Button(_.tooltip := "Settings", _.icon := IconName.`action-settings`),
+          Title.h3("Todo App")
+        ),
         div(
           cls := "inner-home-container",
+          h1("Style Test :-) "),
           p(
             span(
-              "An example of a todo app built on wonderful scala libraries. The list below is unordered by fabulousness."
+              "This todo app is built without a bundler, using Scala 3, Laminar, SAP UI5 and smithy."
             ),
             ul(
               li(
@@ -58,8 +63,7 @@ object HomePageRender:
               li(
                 Link("Smithy4s", _.href := "https://disneystreaming.github.io/smithy4s/docs/overview/intro")
               )
-            ),
-            span("A template based almost entirely on aggressive plagarisation of the excellent ideas of others. ")
+            )
           ),
           renderDataTable(),
           p(
@@ -69,7 +73,7 @@ object HomePageRender:
       )
     )
 
-  def renderDataTable()(using api: Api) =
+  def renderDataTable()(using api: Api) : Div =
     div(
       cls := "todo-table-container",
       table(
@@ -93,7 +97,7 @@ object HomePageRender:
       )
     )
 
-  def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo])(using api: Api) =
+  def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo])(using api: Api) : com.raquo.laminar.nodes.ReactiveHtmlElement[dom.HTMLTableRowElement] =
     val isEditing = Var(false)
     val editedValue = Var[String]("")
     Observer[dom.MouseEvent](onNext = ev => dom.console.log(ev.screenX))
@@ -173,25 +177,25 @@ object HomePageRender:
     )
   end renderTodo
 
-  def deleteAction(using api: Api) =
+  def deleteAction(using api: Api): Observer[String] =
     Observer[String] { s =>
       api.stream(_.todo.deleteTodo(s).map(del => todoListRemove(del.id)))
     }
 
-  def addAction(using api: Api) =
+  def addAction(using api: Api): Observer[Unit] =
     Observer[Unit] { s =>
       api.stream(_.todo.createTodo(false, None).map(tnew => todoListAdd(tnew)))
     }
 
-  def todoListRemove(id: TodoId) =
+  def todoListRemove(id: TodoId): Unit =
     todoList.update(currentList => currentList.filter(_.id != id))
   end todoListRemove
 
-  def updateTodo(t: Todo) =
+  def updateTodo(t: Todo): Unit =
     todoList.update(currentList => currentList.map(tcur => if tcur.id == t.id then t else tcur))
   end updateTodo
 
-  def todoListAdd(newTodo: Todo) =
+  def todoListAdd(newTodo: Todo) : Unit =
     todoList.update(currentList => currentList :+ newTodo)
   end todoListAdd
 

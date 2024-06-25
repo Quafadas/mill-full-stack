@@ -19,6 +19,7 @@ val userRoute = Route(
   pattern = root / "app" / "user" / segment[Int] / endOfSegments
 )
 
+
 val homeRoute = Route.static(HomePage, root )
 
 val router = new Router[Page](
