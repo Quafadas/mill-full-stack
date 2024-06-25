@@ -1,15 +1,13 @@
 package shared
 
-import smithy4s.http4s.*
-import org.http4s.Uri
-import org.http4s.client.Client
 import cats.effect.IO
 import cats.effect.Resource
-
+import org.http4s.Uri
+import org.http4s.client.Client
+import org.http4s.client.middleware.RequestLogger
 import shared.HelloWorldService
 import shared.TodoService
-
-import org.http4s.client.middleware.RequestLogger
+import smithy4s.http4s.*
 
 object Clients:
 

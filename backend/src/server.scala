@@ -1,19 +1,19 @@
 package hello
 
-import cats.effect._
-import cats.implicits._
-import com.comcast.ip4s._
+import cats.effect.*
+import cats.implicits.*
+import com.comcast.ip4s.*
+import org.http4s.*
 import org.http4s.HttpRoutes
 import org.http4s.Request
 import org.http4s.Response
-import org.http4s._
-import org.http4s.dsl.io._
-import org.http4s.ember.server._
-import org.http4s.implicits._
+import org.http4s.dsl.io.*
+import org.http4s.ember.server.*
+import org.http4s.implicits.*
 import org.http4s.server.Router
-import org.http4s.server.middleware._
-import org.http4s.server.staticcontent._
-import shared._
+import org.http4s.server.middleware.*
+import org.http4s.server.staticcontent.*
+import shared.*
 import smithy4s.http4s.SimpleRestJsonBuilder
 import smithy4s.http4s.swagger.docs
 

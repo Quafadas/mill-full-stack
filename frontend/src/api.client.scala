@@ -6,7 +6,7 @@ import com.raquo.laminar.api.L.EventStream
 import org.http4s.Uri
 import org.http4s.client.Client
 import org.http4s.dom.FetchClientBuilder
-import shared._
+import shared.*
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.Future

@@ -1,11 +1,8 @@
 package frontend
 
-import be.doeraene.webcomponents.ui5._
-import cats.syntax.option._
-import com.raquo.laminar.api.L._
+import cats.syntax.option.*
+import com.raquo.laminar.api.L.*
 import com.raquo.waypoint.Router
-
-import scala.scalajs.js
 
 object ChatPage:
 

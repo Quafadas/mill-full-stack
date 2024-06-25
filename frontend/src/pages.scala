@@ -1,11 +1,11 @@
 package frontend
 
 import com.raquo.laminar.api.L
-import com.raquo.laminar.api.L._
-import com.raquo.waypoint._
+import com.raquo.laminar.api.L.*
+import com.raquo.waypoint.*
 import org.scalajs.dom
 import org.scalajs.dom.document
-import upickle.default._
+import upickle.default.*
 import urldsl.errors.DummyError
 
 

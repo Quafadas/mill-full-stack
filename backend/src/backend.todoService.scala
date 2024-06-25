@@ -1,8 +1,8 @@
 package hello
 
 import cats.effect.IO
-import cats.syntax.all._
-import shared._
+import cats.syntax.all.*
+import shared.*
 
 import scala.collection.mutable.ListBuffer
 

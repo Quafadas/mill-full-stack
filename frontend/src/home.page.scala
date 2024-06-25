@@ -1,18 +1,15 @@
 package frontend
 
-import be.doeraene.webcomponents.ui5._
-import be.doeraene.webcomponents.ui5.configkeys._
-import cats.effect._
-import cats.syntax.option._
-import com.raquo.laminar.api.L._
-import io.laminext.syntax.core._
+import be.doeraene.webcomponents.ui5.*
+import be.doeraene.webcomponents.ui5.configkeys.*
+import cats.syntax.option.*
+import com.raquo.laminar.api.L.*
+import io.laminext.syntax.core.*
 import org.scalajs.dom
-import org.scalajs.dom._
-import shared._
+import org.scalajs.dom.*
+import shared.*
 
-import scala.concurrent.duration.Duration
 import scala.scalajs.js
-import scala.scalajs.js.JSConverters._
 
 object HomePageRender:
 
