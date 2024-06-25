@@ -28,7 +28,7 @@ end Api
 
 object Api:
   def create() =
-    val uri = Uri.unsafeFromString("/")
+    Uri.unsafeFromString("/")
 
     val client = FetchClientBuilder[IO].create
 

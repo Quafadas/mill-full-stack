@@ -9,8 +9,6 @@ import org.scalajs.dom
 import org.scalajs.dom.*
 import shared.*
 
-import scala.scalajs.js
-
 object HomePageRender:
 
   val todoList = Var[List[Todo]](List())
@@ -98,7 +96,7 @@ object HomePageRender:
   def renderTodo(id: String, initialTodo: Todo, todoS: Signal[Todo])(using api: Api) =
     val isEditing = Var(false)
     val editedValue = Var[String]("")
-    val clickObserver = Observer[dom.MouseEvent](onNext = ev => dom.console.log(ev.screenX))
+    Observer[dom.MouseEvent](onNext = ev => dom.console.log(ev.screenX))
 
     tr(
       td(
