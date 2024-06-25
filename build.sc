@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::dev-SNAPSHOT`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.23`
 import $ivy.`com.goyeau::mill-scalafix::0.4.0`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
 
@@ -25,14 +25,14 @@ import smithy4s.codegen.mill._
 object Config {
   def scalaVersion = "3.4.2"
   def scalaJSVersion = "1.16.0"
-  def laminarVersion = "17.0.0-M6"
-  def circeVersion = "0.14.6"
+  def laminarVersion = "17.0.0"
+  def circeVersion = "0.14.8"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
-  val http4sVersion = "0.23.25"
-  val scribeVersion = "3.13.0"
+  val http4sVersion = "0.23.27"
+  val scribeVersion = "3.15.0"
 
   def sharedDependencies = Agg(
-    ivy"io.github.quafadas::dedav4s::0.9.0-RC9",
+    ivy"io.github.quafadas::dedav4s::0.9.0",
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
@@ -51,17 +51,17 @@ object Config {
     ivy"org.http4s::http4s-ember-client::${http4sVersion}",
     ivy"org.http4s::http4s-circe:${http4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
-    ivy"org.tpolecat::skunk-core:0.6.3",
-    ivy"is.cir::ciris:3.5.0",
+    ivy"org.tpolecat::skunk-core:0.6.4",
+    ivy"is.cir::ciris:3.6.0",
     ivy"io.chrisdavenport::mules:0.7.0",
-    ivy"org.flywaydb:flyway-core:10.8.1",
-    ivy"org.postgresql:postgresql:42.7.2"
+    ivy"org.flywaydb:flyway-core:10.15.0",
+    ivy"org.postgresql:postgresql:42.7.3"
   )
 
   def jsDependencies = Agg(
     ivy"""com.raquo::laminar::$laminarVersion""",
-    ivy"""be.doeraene::web-components-ui5::1.21.0""",
-    ivy"""com.raquo::waypoint::7.0.0""",
+    ivy"""be.doeraene::web-components-ui5::1.21.2""",
+    ivy"""com.raquo::waypoint::8.0.0""",
     ivy"org.scala-js::scalajs-dom::2.8.0",
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
     ivy"org.http4s::http4s-dom::0.2.11",
@@ -102,7 +102,7 @@ object shared extends CrossPlatform {
   object js extends Shared with CommonJS
 }
 
-object backend extends Common with ScalafmtModule with ScalafixModule { // with ScalafixModule
+object backend extends Common with ScalafmtModule with ScalafixModule {
   def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
@@ -144,9 +144,12 @@ object backend extends Common with ScalafmtModule with ScalafixModule { // with 
 }
 
 object frontend extends CommonJS with ScalafmtModule  {
-  // def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
+
   def moduleKind = ModuleKind.ESModule
-  def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(List("frontend"))
+
+  def moduleSplitStyle = ModuleSplitStyle.SmallModulesFor(
+    List("frontend", "shared")
+  )
 
   override def scalaJSImportMap = T {
     Seq(
@@ -156,22 +159,9 @@ object frontend extends CommonJS with ScalafmtModule  {
     )
   }
 
-  // def dev = T {
-  //   public(fastLinkJS)()
-  // }
-  // def publicProd = T {
-  //   public(fullLinkJS)()
-  // }
   def moduleDeps = Seq(
     shared.js,
-  ) // ++ super.moduleDeps // ++ Seq(scalablytyped.stModule)
+  )
 
   def ivyDeps = super.ivyDeps() ++ Config.jsDependencies
-}
-
-private def public(jsTask: Task[Report]): Task[Map[String, os.Path]] = T.task {
-  val jsDir = jsTask().dest.path
-  Map(
-    "@public" -> jsDir
-  )
 }
