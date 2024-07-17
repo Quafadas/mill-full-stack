@@ -46,6 +46,11 @@ object HomePageRender:
         div(
           cls := "inner-home-container",
           h1("Style Test :-) "),
+          // DatePicker(
+          //   _.value := "2021-09-01",
+          //   _.formatPattern := "yyyy-MM-dd",
+          //   _.placeholder := "Select a date"
+          // ),
           p(
             span(
               "This todo app is built without a bundler, using Scala 3, Laminar, SAP UI5 and smithy."

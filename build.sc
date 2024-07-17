@@ -53,6 +53,7 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ivy"org.tpolecat::skunk-core:0.6.4",
     ivy"is.cir::ciris:3.6.0",
+    ivy"io.github.quafadas::frontend-routes:0.1.4-15-4e8c2a-DIRTY8d004e7"
     // ivy"io.chrisdavenport::mules:0.7.0",
     // ivy"org.flywaydb:flyway-core:10.15.0",
     // ivy"org.postgresql:postgresql:42.7.3"
@@ -118,37 +119,20 @@ object backend extends Common with ScalafmtModule with ScalafixModule {
 
   def moduleDeps = Seq(shared.jvm)
 
-  def assemblyRules = {
-    // Run a the full frontend build
-    println(
-      "assuming you've already built and packaged the frontend with npm run build... "
-    )
-    val resourcePath = backend.millSourcePath / "resources" / "assets"
-    if (os.exists(resourcePath)) {
-      os.remove.all(resourcePath)
-    }
-    println(
-      "assuming you've already built and packaged the frontend with npm run build... "
-    )
-    os.makeDir.all(resourcePath)
-    os.copy(
-      frontend.millSourcePath / "ui" / "dist" / "index.html",
-      resourcePath / "index.html"
-    )
-    os.copy(
-      frontend.millSourcePath / "ui" / "dist" / "assets",
-      resourcePath,
-      mergeFolders = true
-    )
-    /*     os.copy(
-      backend.millSourcePath / "src" / "gen" / "openapi",
-      backend.millSourcePath / "resources",
-      mergeFolders = true
-    ) */
+  def frontendResources = T{PathRef(frontend.fullLinkJS().dest.path)}
 
-    val assets = os.walk(backend.millSourcePath / "resources")
-    println(assets)
-    assets.map(x => Rule.Append(x.toString))
+  def staticAssets = T.source{PathRef(frontend.millSourcePath / "ui")}
+
+  def allClasspath = T{localClasspath() ++ Seq(frontendResources()) ++ Seq(staticAssets())  }
+
+  override def assembly: T[PathRef] = T{
+    Assembly.createAssembly(
+      Agg.from(allClasspath().map(_.path)),
+      manifest(),
+      prependShellScript(),
+      Some(upstreamAssembly2().pathRef.path),
+      assemblyRules
+    )
   }
 }
 
@@ -162,9 +146,10 @@ object frontend extends CommonJS with ScalafmtModule  {
 
   override def scalaJSImportMap = T {
     Seq(
-      ESModuleImportMapping.Prefix("@ui5/webcomponents/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents/"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-fiori/"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-icons/")
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-localization/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-localization@1.24.7/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents@1.24.7/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-fiori@1.24.7/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-icons@1.24.7/")
     )
   }
 

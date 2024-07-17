@@ -2,11 +2,11 @@ devFront:
   cs launch io.github.quafadas:live-server-scala-cli-js_3:0.1.3 -- --path-to-index-html /Users/simon/Code/mill-full-stack/mill-full-stack/frontend/ui --build-tool mill --mill-module-name frontend --port 3001 --out-dir /Users/simon/Code/mill-full-stack/mill-full-stack/out/frontend/fastLinkJS.dest --client-routes-prefix /app
 
 dev:
-  cs launch io.github.quafadas:live-server-scala-cli-js_3:0.1.3 -- \
+  cs launch io.github.quafadas:sjsls_3:0.1.4-11-411e9b-DIRTY6e264a38 -- \
     --path-to-index-html /Users/simon/Code/mill-full-stack/mill-full-stack/frontend/ui \
     --build-tool mill \
     --mill-module-name frontend  \
-    --port 3001 \
+    --port 3002 \
     --out-dir /Users/simon/Code/mill-full-stack/mill-full-stack/out/frontend/fastLinkJS.dest \
     --proxy-prefix-path /api \
     --proxy-target-port 8080
