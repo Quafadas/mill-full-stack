@@ -13,6 +13,7 @@ import org.scalajs.dom
 import org.scalajs.dom.*
 
 import shared.*
+import java.sql.Date
 
 object HomePageRender:
 
@@ -45,12 +46,6 @@ object HomePageRender:
         ),
         div(
           cls := "inner-home-container",
-          h1("Style Test :-) "),
-          // DatePicker(
-          //   _.value := "2021-09-01",
-          //   _.formatPattern := "yyyy-MM-dd",
-          //   _.placeholder := "Select a date"
-          // ),
           p(
             span(
               "This todo app is built without a bundler, using Scala 3, Laminar, SAP UI5 and smithy."
@@ -89,13 +84,14 @@ object HomePageRender:
             th("Id hi"),
             th("Description"),
             th("Done"),
-            th(""),
-            th(
-              span(
+            th("Edit"),
+            th("Del"),
+            th("Deadline"
+            ),
+            th(span(
                 linkIcon(IconName.add),
                 onClick.mapToUnit --> addAction
-              )
-            )
+              ))
           )
         ),
         children <-- todoList.signal.split(_.id.value)(renderTodo)
@@ -178,7 +174,15 @@ object HomePageRender:
             onClick.mapTo(id) --> deleteAction
           )
         )
+      ),
+      td(
+        DatePicker(
+          _.value := "2021-09-01",
+          _.formatPattern := "yyyy-MM-dd",
+          _.placeholder := "Deadline"
+        )
       )
+
     )
   end renderTodo
 

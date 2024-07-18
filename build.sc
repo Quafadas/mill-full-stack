@@ -2,8 +2,6 @@ import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.23
 import $ivy.`com.goyeau::mill-scalafix::0.4.0`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
 
-import $file.CustomZincWorkerModule
-
 import com.goyeau.mill.scalafix.ScalafixModule
 import com.github.lolgab.mill.crossplatform._
 
@@ -37,7 +35,6 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s::${smithy4sVersion}",
     ivy"com.outr::scribe::$scribeVersion",
     ivy"com.outr::scribe-cats::$scribeVersion",
-    //ivy"com.lihaoyi::upickle::3.1.0"
   ) ++ Agg(
     "io.circe::circe-core:",
     "io.circe::circe-generic:",
@@ -54,9 +51,6 @@ object Config {
     ivy"org.tpolecat::skunk-core:0.6.4",
     ivy"is.cir::ciris:3.6.0",
     ivy"io.github.quafadas::frontend-routes:0.1.4-15-4e8c2a-DIRTY8d004e7"
-    // ivy"io.chrisdavenport::mules:0.7.0",
-    // ivy"org.flywaydb:flyway-core:10.15.0",
-    // ivy"org.postgresql:postgresql:42.7.3"
   )
 
   def jsDependencies = Agg(
@@ -113,7 +107,7 @@ object shared extends CrossPlatform {
 }
 
 object backend extends Common with ScalafmtModule with ScalafixModule {
-  def repositoriesTask = CustomZincWorkerModule.CustomZincWorkerModule.repositoriesTask
+
   def ivyDeps =
     super.ivyDeps() ++ Config.jvmDependencies ++ Config.sharedDependencies
 
