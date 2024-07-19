@@ -120,6 +120,24 @@ object backend extends Common with ScalafmtModule with ScalafixModule {
   def allClasspath = T{localClasspath() ++ Seq(frontendResources()) ++ Seq(staticAssets())  }
 
   override def assembly: T[PathRef] = T{
+    val internals = os.list( frontendResources().path).filter(p => p.last.startsWith("internal-") && os.isFile(p) && p.last.endsWith(".js")).map{ p =>
+       s"""<link rel="modulepreload" href="${p.last}">"""
+    }
+
+    val index = os.read(staticAssets().path / "index.html")
+
+    val modulesStringsInject = internals.mkString("\n", "\n", "\n")
+    val headCloseTag = "</head>"
+    val insertionPoint = index.indexOf(headCloseTag)
+
+    val newHtmlContent = index.substring(0, insertionPoint) +
+      modulesStringsInject +
+      index.substring(insertionPoint)
+
+    println(newHtmlContent)
+
+    os.write.over(staticAssets().path / "index.html", newHtmlContent)
+
     Assembly.createAssembly(
       Agg.from(allClasspath().map(_.path)),
       manifest(),
