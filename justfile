@@ -19,6 +19,9 @@ compileAll:
 checkUpdates:
   mill mill.scalalib.Dependency/showUpdates
 
+getDeps:
+  mill __.prepareOffline
+
 setupIde:
   mill --import ivy:com.lihaoyi::mill-contrib-bloop:  mill.contrib.bloop.Bloop/install
 
