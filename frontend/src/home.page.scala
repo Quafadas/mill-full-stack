@@ -81,7 +81,7 @@ object HomePageRender:
         thead(
           cls := "todo-table-header",
           tr(
-            th("Id hi"),
+            th("Id"),
             th("Description"),
             th("Done"),
             th("Edit"),
