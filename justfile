@@ -21,3 +21,6 @@ checkUpdates:
 
 setupIde:
   mill --import ivy:com.lihaoyi::mill-contrib-bloop:  mill.contrib.bloop.Bloop/install
+
+generateSmithyConfig:
+   mill smithy4s.codegen.LSP/updateConfig

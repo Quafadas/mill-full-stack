@@ -1,7 +1,19 @@
 {
-  "version": "1.0",
-  "imports": ["/shared/smithy"],
-  "mavenDependencies": [
-    "com.disneystreaming.smithy4s:smithy4s-protocol_3:latest.stable"
-  ]
+    "version" : "1.0",
+    "sources" : [
+        "./shared/smithy"
+    ],
+    "maven" : {
+        "dependencies" : [
+            "com.disneystreaming.alloy:alloy-core:0.3.9"
+        ],
+        "repositories" : [
+        ]
+    },
+    "imports" : [
+        "/shared/smithy"
+    ],
+    "mavenDependencies" : [
+        "com.disneystreaming.smithy4s:smithy4s-protocol_3:latest.stable"
+    ]
 }
