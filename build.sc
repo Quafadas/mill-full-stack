@@ -134,8 +134,6 @@ object backend extends Common with ScalafmtModule with ScalafixModule {
       modulesStringsInject +
       index.substring(insertionPoint)
 
-    println(newHtmlContent)
-
     os.write.over(staticAssets().path / "index.html", newHtmlContent)
 
     Assembly.createAssembly(
