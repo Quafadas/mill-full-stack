@@ -13,10 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK LTS
-        uses: actions/setup-java@v2
+      - uses: coursier/setup-action@main
         with:
-          java-version: "17"
-          distribution: "adopt"
+          jvm: temurin@17
+          apps: mill
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Build application
         run: mill assembly
