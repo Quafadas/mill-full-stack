@@ -31,7 +31,7 @@ object Main extends IOApp:
         EmberServerBuilder
           .default[IO]
           .withPort(port"8080")
-          .withHost(host"localhost")
+          .withHost(host"0.0.0.0")
           .withHttpApp(corsBypass.orNotFound)
           .withShutdownTimeout(10.millis)
           // .withHttpApp(ui.orNotFound)
