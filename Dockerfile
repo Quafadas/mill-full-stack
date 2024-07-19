@@ -5,4 +5,4 @@ COPY "./out/backend/assembly.dest/out.jar" "/app/app.jar"
 
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-Dport=8080", "-DisProd=true", "-jar", "/app/app.jar" ]
+ENTRYPOINT [ "java", "-jar", "/app/app.jar" ]
