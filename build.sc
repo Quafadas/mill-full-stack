@@ -50,7 +50,7 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ivy"org.tpolecat::skunk-core:0.6.4",
     ivy"is.cir::ciris:3.6.0",
-    ivy"io.github.quafadas::frontend-routes:0.1.4-15-4e8c2a-DIRTY8d004e7"
+    ivy"io.github.quafadas::frontend-routes:0.2.0"
   )
 
   def jsDependencies = Agg(
