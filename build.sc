@@ -56,7 +56,7 @@ object Config {
   def jsDependencies = Agg(
     ivy"io.github.quafadas::dedav4s::0.9.0",
     ivy"""com.raquo::laminar::$laminarVersion""",
-    ivy"""be.doeraene::web-components-ui5::1.21.2""",
+    ivy"""io.github.quafadas::web-components-ui5::2.0.0-RC2c""",
     ivy"""com.raquo::waypoint::8.0.0""",
     ivy"org.scala-js::scalajs-dom::2.8.0",
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
@@ -156,10 +156,10 @@ object frontend extends CommonJS with ScalafmtModule  {
 
   override def scalaJSImportMap = T {
     Seq(
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-localization/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-localization@1.24.7/"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents@1.24.7/"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-fiori@1.24.7/"),
-      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-icons@1.24.7/")
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-localization/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-localization@2.2.0-rc.3/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents@2.2.0-rc.3/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-fiori/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-fiori@2.2.0-rc.3/"),
+      ESModuleImportMapping.Prefix("@ui5/webcomponents-icons/", "https://cdn.jsdelivr.net/npm/@ui5/webcomponents-icons@2.2.0-rc.3/")
     )
   }
 

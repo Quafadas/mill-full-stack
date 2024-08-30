@@ -2,7 +2,7 @@ devBack:
   mill -j 0 -w backend.runBackground
 
 devFront:
-  cs launch io.github.quafadas::sjsls:0.2.0 -- \
+  cs launch --contrib sjsls -- \
     --path-to-index-html /Users/simon/Code/mill-full-stack/mill-full-stack/frontend/ui \
     --build-tool mill \
     --mill-module-name frontend  \

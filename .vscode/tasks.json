@@ -29,7 +29,7 @@
         {
             "label": "frontend",
             "type": "shell",
-            "command": "mill -j 0 frontend.fastLinkJS && just dev",
+            "command": "mill -j 0 frontend.fastLinkJS && just devFront",
             "presentation": {
                 "panel": "dedicated",
                 "group": "runDevCmd"
