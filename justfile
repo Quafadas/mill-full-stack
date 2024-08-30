@@ -27,3 +27,6 @@ setupIde:
 
 generateSmithyConfig:
    mill smithy4s.codegen.LSP/updateConfig
+
+assemble:
+  mill show backend.assembly
