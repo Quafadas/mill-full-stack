@@ -18,6 +18,6 @@ jobs:
           apps: mill
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Build application
-        run: mill show backend.assembly -j 0
+        run: mill show backend.assembly
       - name: Deploy to fly.io
         run: flyctl deploy --remote-only
