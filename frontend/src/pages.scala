@@ -22,15 +22,13 @@ val userRoute = Route(
 
 val homeRoute = Route.static(HomePage, root )
 
-val router = new Router[Page](
+val router = Router[Page](
   routes = List(userRoute, homeRoute),
   getPageTitle = _.toString, // mock page title (displayed in the browser tab next to favicon)
   serializePage = page => write(page), // serialize page data for storage in History API log
   deserializePage = pageStr => read(pageStr) // deserialize the above
-)(
-  popStateEvents = L.windowEvents(_.onPopState), // this is how Waypoint avoids an explicit dependency on Laminar
-  owner = L.unsafeWindowOwner // this router will live as long as the window
 )
+
 
 def splitter(using a: Api, r: Router[Page]) = SplitRender[Page, HtmlElement](router.currentPageSignal)
   .collectSignal[UserPage] { userPageSignal => h1("user") }
