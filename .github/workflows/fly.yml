@@ -15,9 +15,8 @@ jobs:
       - uses: coursier/setup-action@main
         with:
           jvm: temurin@17
-          apps: mill
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Build application
-        run: mill show backend.assembly
+        run: ./mill show backend.assembly
       - name: Deploy to fly.io
         run: flyctl deploy --remote-only
