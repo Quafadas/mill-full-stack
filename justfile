@@ -16,7 +16,7 @@ devFront:
 compileAll:
   mill __.compile -j 0
 
-checkUpdates:
+update:
   mill mill.scalalib.Dependency/showUpdates
 
 getDeps:

@@ -1,4 +1,4 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.23`
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.28`
 import $ivy.`com.goyeau::mill-scalafix::0.4.0`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
 
@@ -22,13 +22,13 @@ import os.{GlobSyntax, /}
 import smithy4s.codegen.mill._
 
 object Config {
-  def scalaVersion = "3.4.2"
-  def scalaJSVersion = "1.16.0"
-  def laminarVersion = "17.0.0"
-  def circeVersion = "0.14.8"
+  def scalaVersion = "3.6.2"
+  def scalaJSVersion = "1.18.1"
+  def laminarVersion = "17.2.0"
+  def circeVersion = "0.14.10"
   val smithy4sVersion = smithy4s.codegen.BuildInfo.version
-  val http4sVersion = "0.23.27"
-  val scribeVersion = "3.15.0"
+  val http4sVersion = "0.23.30"
+  val scribeVersion = "3.16.0"
 
   def sharedDependencies = Agg(
     ivy"com.disneystreaming.smithy4s::smithy4s-core::${smithy4sVersion}",
@@ -49,15 +49,15 @@ object Config {
     ivy"org.http4s::http4s-circe:${http4sVersion}",
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ivy"org.tpolecat::skunk-core:0.6.4",
-    ivy"is.cir::ciris:3.6.0",
-    ivy"io.github.quafadas::frontend-routes:0.2.0"
+    ivy"is.cir::ciris:3.7.0",
+    ivy"io.github.quafadas::frontend-routes:0.2.1"
   )
 
   def jsDependencies = Agg(
-    ivy"io.github.quafadas::dedav4s::0.9.0",
+    ivy"io.github.quafadas::dedav4s::0.9.3",
     ivy"""com.raquo::laminar::$laminarVersion""",
     ivy"""io.github.quafadas::web-components-ui5::2.0.0-RC2c""",
-    ivy"""com.raquo::waypoint::8.0.0""",
+    ivy"""com.raquo::waypoint::9.0.0""",
     ivy"org.scala-js::scalajs-dom::2.8.0",
     ivy"org.scala-js::scalajs-java-securerandom::1.0.0".withDottyCompat(scalaVersion),
     ivy"org.http4s::http4s-dom::0.2.11",
@@ -99,7 +99,7 @@ object shared extends CrossPlatform {
   object jvm extends Shared {
     object test extends CrossPlatformSources with ScalaTests with TestModule.Munit {
       def ivyDeps = Agg(
-        ivy"org.scalameta::munit::1.0.0"
+        ivy"org.scalameta::munit::1.0.4"
       )
     }
   }
