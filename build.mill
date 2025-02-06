@@ -1,6 +1,9 @@
-import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.28`
-import $ivy.`com.goyeau::mill-scalafix::0.4.0`
+package build
+
+import $ivy.`com.disneystreaming.smithy4s::smithy4s-mill-codegen-plugin::0.18.29`
 import $ivy.`com.github.lolgab::mill-crossplatform::0.2.4`
+import $ivy.`com.goyeau::mill-scalafix::0.5.0`
+
 
 import com.goyeau.mill.scalafix.ScalafixModule
 import com.github.lolgab.mill.crossplatform._
@@ -50,7 +53,7 @@ object Config {
     ivy"com.disneystreaming.smithy4s::smithy4s-http4s-swagger:${smithy4sVersion}",
     ivy"org.tpolecat::skunk-core:0.6.4",
     ivy"is.cir::ciris:3.7.0",
-    ivy"io.github.quafadas::frontend-routes:0.2.1"
+    ivy"io.github.quafadas::frontend-routes:0.2.5"
   )
 
   def jsDependencies = Agg(
@@ -99,7 +102,7 @@ object shared extends CrossPlatform {
   object jvm extends Shared {
     object test extends CrossPlatformSources with ScalaTests with TestModule.Munit {
       def ivyDeps = Agg(
-        ivy"org.scalameta::munit::1.0.4"
+        ivy"org.scalameta::munit::1.1.0"
       )
     }
   }

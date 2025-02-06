@@ -29,3 +29,7 @@ generateSmithyConfig:
 
 assemble:
   mill show backend.assembly
+
+update: 
+  mill mill.scalalib.Dependency/showUpdates
+  mill --meta-level 1 mill.scalalib.Dependency/showUpdates
